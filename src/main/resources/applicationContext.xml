@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- we need to use xml because the componentClass is hard typed to be a StoreEditPanel.  The generic check is
+    circumvented when using XML config.  This is an issue with GeoServer that they've probably never identified
+    because they still use XML config everywhere. -->
+
+    <bean id="stacCoverageStorePanel" class="org.geoserver.web.data.resource.DataStorePanelInfo">
+        <property name="id" value="stacMosaic" />
+        <property name="factoryClass" value="com.joshfix.stac.store.mosaic.StacMosaicFormat" />
+        <property name="iconBase" value="org.geoserver.web.GeoServerApplication" />
+        <property name="icon" value="img/icons/geosilk/page_white_raster.png" />
+        <property name="componentClass" value="com.joshfix.stac.store.mosaic.StacCoverageStoreEditPanel" />
+    </bean>
+
+    <bean id="stacVectorStorePanel" class="org.geoserver.web.data.resource.DataStorePanelInfo">
+        <property name="id" value="stacVector" />
+        <property name="factoryClass" value="com.joshfix.stac.store.vector.factory.StacVectorDataStoreFactorySpi" />
+        <property name="iconBase" value="org.geoserver.web.GeoServerApplication" />
+        <property name="icon" value="img/icons/geosilk/page_white_vector.png" />
+        <property name="componentClass" value="com.joshfix.stac.store.vector.web.StacVectorStoreEditPanel" />
+    </bean>
+
+</beans>
