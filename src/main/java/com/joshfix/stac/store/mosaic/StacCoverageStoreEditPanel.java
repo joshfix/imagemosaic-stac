@@ -54,7 +54,7 @@ public class StacCoverageStoreEditPanel extends StoreEditPanel {
         } else {
             // TODO remove
             model.setUrl("https://stac.boundlessgeo.io/stac/search");
-            model.setDefaultItemId("LC81530132019135LGN00");
+            model.setDefaultItemId("LC81780802019134LGN00");
         }
 
         TextParamPanel urlPanel = new TextParamPanel(
