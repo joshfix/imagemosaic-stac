@@ -71,9 +71,8 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
         client = new StacRestClient(uri);
 
         try {
-            originalEnvelope = new GeneralEnvelope(CRS.decode(configProps.getCrs());
+            originalEnvelope = new GeneralEnvelope(CRS.decode(configProps.getCrs()));
             originalEnvelope.setEnvelope(-180.0, -90.0, 180.0, 90.0);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
