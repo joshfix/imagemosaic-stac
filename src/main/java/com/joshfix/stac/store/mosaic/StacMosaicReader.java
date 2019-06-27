@@ -1,6 +1,7 @@
 package com.joshfix.stac.store.mosaic;
 
 import com.joshfix.stac.store.utility.AssetLocator;
+import com.joshfix.stac.store.utility.SearchRequest;
 import com.joshfix.stac.store.utility.StacException;
 import com.joshfix.stac.store.utility.StacRestClient;
 import com.joshfix.stac.store.vector.factory.StacDataStoreFactorySpi;
@@ -36,6 +37,7 @@ import org.opengis.referencing.operation.MathTransform;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -187,7 +189,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
     @SuppressWarnings("unchecked")
     public GeoTiffReader getGeoTiffReader(String itemId) throws DataSourceException {
 
-        Map item = getItem(itemId);
+        Map item = getItem();
 
         if (null == item) {
             throw new DataSourceException("Unable to find item with id '" + itemId + "' in STAC.");
@@ -224,6 +226,26 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
 
         throw new DataSourceException("Unable to create GeoTiff reader for STAC item ID: " + itemId);
 
+    }
+
+    public Map getItem() throws DataSourceException {
+        // if no item id was provided, use the default item id
+        if (null != defaultItem) {
+            return defaultItem;
+        }
+        try {
+            SearchRequest request = new SearchRequest();
+            request.setLimit(1);
+            Map<String, Object> itemCollection = client.search(request);
+            List<Map> items = (List<Map>)itemCollection.get("features");
+            if (!items.isEmpty()) {
+                defaultItem = items.get(0);
+            }
+
+            return defaultItem;
+        } catch (StacException e) {
+            throw new DataSourceException(e.getMessage());
+        }
     }
 
     public Map getItem(String itemId) throws DataSourceException {
