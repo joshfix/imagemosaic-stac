@@ -10,6 +10,7 @@ import org.geotools.data.Query;
 import org.opengis.feature.type.Name;
 
 import java.io.IOException;
+import java.util.HashSet;
 
 /**
  * @author joshfix
@@ -34,8 +35,8 @@ public class StacMosaicVectorFeatureSource extends StacFeatureSource {
         // if there are no CQL filters, layer filters, and we're requesting max features, it's likely geotools gathering
         // metadata before the layer is built, so there is no reason to make huge queries
         if (null == cqlFilter && query.getMaxFeatures() == Integer.MAX_VALUE && layerParameters.getMaxGranules() == 0) {
-            request.setQuery(QUERY);
-            request.setLimit(1);
+            resultSet = new HashSet<>();
+            return new StacFeatureCollection(resultSet, getName(), layerParameters, getSchema());
         } else if (null != cqlFilter) {
             // this means there is a query query or a request for specific item IDs, so it should be a legit service request
             if (cqlFilter.getQuery() != null && !cqlFilter.getQuery().isBlank()) {
@@ -45,11 +46,11 @@ public class StacMosaicVectorFeatureSource extends StacFeatureSource {
                 request.setIds(cqlFilter.getIds().split(","));
             }
             request.setLimit(layerParameters.getMaxGranules());
-
         } else if (request.getBbox() == null && request.getLimit() == layerParameters.getMaxFeatures()) {
             // DescribeFeature does not give us an id or any positional info, so if we have a request for max features and
             // no bounding box, just restrict it to a single image.  note this is not going to return valid results.
-            request.setLimit(1);
+            resultSet = new HashSet<>();
+            return new StacFeatureCollection(resultSet, getName(), layerParameters, getSchema());
         } else {
             request.setLimit(layerParameters.getMaxGranules());
         }

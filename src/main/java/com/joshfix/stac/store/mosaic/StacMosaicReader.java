@@ -19,6 +19,7 @@ import org.geotools.gce.imagemosaic.catalog.GranuleCatalog;
 import org.geotools.gce.imagemosaic.catalog.index.Indexer;
 import org.geotools.gce.imagemosaic.catalog.index.IndexerUtils;
 import org.geotools.gce.imagemosaic.granulecollector.ReprojectingSubmosaicProducerFactory;
+import org.geotools.geometry.GeneralEnvelope;
 import org.geotools.parameter.Parameter;
 import org.geotools.referencing.CRS;
 import org.geotools.util.factory.Hints;
@@ -29,7 +30,6 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -53,11 +53,11 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
     private MosaicConfigurationProperties configProps = new MosaicConfigurationProperties();
     private LayerParameters layerParameters;
 
-    public StacMosaicReader(URI uri) throws DataSourceException, URISyntaxException {
+    public StacMosaicReader(URI uri) throws DataSourceException {
         this(uri, null);
     }
 
-    public StacMosaicReader(URI uri, Hints uHints) throws DataSourceException, URISyntaxException {
+    public StacMosaicReader(URI uri, Hints uHints) throws DataSourceException {
         super(uri, uHints);
 
         String uriString = uri.toString();
@@ -70,30 +70,19 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
 
         client = new StacRestClient(uri);
 
-        GeoTiffReader sampleReader = getGeoTiffReader(null);
-        this.originalEnvelope = sampleReader.getOriginalEnvelope();
-
-        this.crs = sampleReader.getCoordinateReferenceSystem();
-
         try {
-            CoordinateReferenceSystem crs = CRS.decode(configProps.getCrs());
-            MathTransform mt = CRS.findMathTransform(originalEnvelope.getCoordinateReferenceSystem(), crs, true);
-            originalEnvelope = CRS.transform(mt, originalEnvelope);
-            originalEnvelope.setCoordinateReferenceSystem(crs);
-            this.crs = crs;
+            originalEnvelope = new GeneralEnvelope(CRS.decode(configProps.getCrs());
+            originalEnvelope.setEnvelope(-180.0, -90.0, 180.0, 90.0);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //this.originalGridRange = sampleReader.getOriginalGridRange();
-        //this.inStreamSPI = new URLImageInputStreamSpi();
 
         this.originalGridRange = new GridEnvelope2D(
                 0,
                 0,
                 LayerParameters.GRID_WIDTH_DEFAULT,
                 LayerParameters.GRID_HEIGHT_DEFAULT);
-
-
     }
 
     @Override
@@ -208,7 +197,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
         String imageUrl = null;
         try {
             // TODO: need to determine  a smart way to dynamically grab a legitimate band for the sample image
-            imageUrl = AssetLocator.getAssetImageUrl(item, "B3");
+            imageUrl = AssetLocator.getRandomAssetImageUrl(item);
         } catch (Exception e) {
             throw new DataSourceException("Unable to determine the image URL from the STAC item.");
         }

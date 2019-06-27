@@ -10,6 +10,7 @@ import org.geotools.data.Query;
 import org.opengis.feature.type.Name;
 
 import java.io.IOException;
+import java.util.HashSet;
 
 
 /**
@@ -43,16 +44,18 @@ public class StacVectorFeatureSource extends StacFeatureSource {
         if (null == cqlFilter && query.getMaxFeatures() == Integer.MAX_VALUE
                 && (layerParameters.getLayerQuery() == null || layerParameters.getLayerQuery().isEmpty() ||
                 layerParameters.getCollection() == null || layerParameters.getCollection().isBlank())) {
-            stacFilter = QUERY;
+            //stacFilter = QUERY;
             // setting the limit to 1 or 2 always results in some invalid width exception. for some reason setting this to 3 works
-            request.setLimit(1);
+            resultSet = new HashSet<>();
+            return new StacFeatureCollection(resultSet, getName(), layerParameters, getSchema());
         } else if (null != cqlFilter && cqlFilter.getQuery() != null && !cqlFilter.getQuery().isBlank()) {
             request.setQuery(cqlFilter.getQuery());
 
             if (cqlFilter.getIds() != null && !cqlFilter.getIds().isBlank()) {
                 request.setIds(cqlFilter.getIds().split(","));
             }
-            request.setLimit(1);
+            resultSet = new HashSet<>();
+            return new StacFeatureCollection(resultSet, getName(), layerParameters, getSchema());
         } else {
             request.setLimit(layerParameters.getMaxFeatures());
         }

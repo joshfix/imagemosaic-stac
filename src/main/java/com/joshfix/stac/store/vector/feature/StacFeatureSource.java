@@ -180,8 +180,7 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
     }
 
     protected Set<Map> buildResultSet(Map stacResponse) {
-        Set<Map> resultSet = new HashSet((List) stacResponse.get("features"));
-        return resultSet;
+        return new HashSet((List) stacResponse.get("features"));
     }
 
     @Override
