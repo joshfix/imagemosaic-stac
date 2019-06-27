@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
+import static com.joshfix.stac.store.KeyNames.SERVICE_URL_KEY;
+
 /**
  * @author joshfix
  */

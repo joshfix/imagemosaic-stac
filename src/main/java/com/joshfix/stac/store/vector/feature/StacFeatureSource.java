@@ -16,6 +16,8 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.sort.SortedFeatureReader;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.NameImpl;
+import org.geotools.filter.AndImpl;
+import org.geotools.filter.IsEqualsToImpl;
 import org.geotools.filter.visitor.DuplicatingFilterVisitor;
 import org.geotools.gce.imagemosaic.Utils;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -48,7 +50,7 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
     protected StacRestClient client;
     protected ReferencedEnvelope referencedEnvelope;
     protected static Map<String, SimpleFeatureType> featureTypeMap = new HashMap<>();
-    public static final String FILTER = null;
+    public static final String QUERY = null;
     protected QueryCapabilities queryCapabilities;
     protected Set<Map> resultSet;
 
@@ -147,7 +149,7 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
             if (layerParameters.getCollection() != null) {
                 req.setCollections(layerParameters.getCollection().split(","));
             } else {
-                req.setQuery(FILTER);
+                req.setQuery(QUERY);
             }
             log.debug("Search STAC for schema item with request: " + req);
 
@@ -174,6 +176,11 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
             resultSet.add(next);
         }
         itemIterator.close();
+        return resultSet;
+    }
+
+    protected Set<Map> buildResultSet(Map stacResponse) {
+        Set<Map> resultSet = new HashSet((List) stacResponse.get("features"));
         return resultSet;
     }
 
@@ -218,41 +225,51 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
         return request;
     }
 
-    protected CqlWrapper getStacFilter(Query query) {
+    // TODO: this is a poor implementation of parsing CQL query.  At the time of this comment, this plugin only supports
+    // `ids` and `query` parameters, but in the future this should be able to be expanded.
+    protected CqlFilter parseCqlFilters(Query query) {
+        CqlFilter cqlFilter = new CqlFilter();
         Filter filter = query.getFilter();
-        //String stacFilter = "";
 
         if (filter instanceof PropertyIsEqualTo) {
             PropertyIsEqualTo eq = (PropertyIsEqualTo) filter;
-            return getStacFilter(eq);
+            parseCqlFilters(eq, cqlFilter);
         } else if (filter instanceof BinaryLogicOperator) {
-            for (Filter child : ((BinaryLogicOperator) filter).getChildren()) {
-                if (child instanceof PropertyIsEqualTo) {
-                    PropertyIsEqualTo eq = (PropertyIsEqualTo) child;
-                    return getStacFilter(eq);
+            List<Filter> childFilters = ((BinaryLogicOperator) filter).getChildren();
+            for (Filter childFilter : childFilters) {
+                if (childFilter instanceof AndImpl) {
+                    for (Object child : ((AndImpl) childFilter).getChildren()) {
+                        if (child instanceof IsEqualsToImpl) {
+                            parseCqlFilters((IsEqualsToImpl) child, cqlFilter);
+                        }
+                    }
+                } else if (childFilter instanceof IsEqualsToImpl) {
+                    parseCqlFilters((IsEqualsToImpl) childFilter, cqlFilter);
                 }
             }
         }
-        return null;
+        return cqlFilter;
     }
 
     @Data
-    static class CqlWrapper {
-        private String filter;
+    static class CqlFilter {
+        private String query;
         private String ids;
     }
 
-    protected CqlWrapper getStacFilter(PropertyIsEqualTo filter) {
-        CqlWrapper cqlWrapper = new CqlWrapper();
+    protected CqlFilter parseCqlFilters(PropertyIsEqualTo filter, CqlFilter cqlFilter) {
+        if (cqlFilter == null) {
+            cqlFilter = new CqlFilter();
+        }
         if (filter.getExpression1() instanceof PropertyName && filter.getExpression2() instanceof Literal) {
-            if (((PropertyName) filter.getExpression1()).getPropertyName().equalsIgnoreCase("stacFilter")) {
-                cqlWrapper.setFilter(((Literal) filter.getExpression2()).getValue().toString());
+            if (((PropertyName) filter.getExpression1()).getPropertyName().equalsIgnoreCase("query")) {
+                cqlFilter.setQuery(((Literal) filter.getExpression2()).getValue().toString());
             }
             if (((PropertyName) filter.getExpression1()).getPropertyName().equalsIgnoreCase("ids")) {
-                cqlWrapper.setIds(((Literal) filter.getExpression2()).getValue().toString());
+                cqlFilter.setIds(((Literal) filter.getExpression2()).getValue().toString());
             }
         }
-        return cqlWrapper;
+        return cqlFilter;
     }
 
     protected void buildStacRequestBbox(Query query, SearchRequest request) {
@@ -271,12 +288,13 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
         }
     }
 
-    protected String addDefaultStacFilter(String stacFilter) {
-        if (layerParameters.getDefaultStacFilter() != null && !layerParameters.getDefaultStacFilter().isEmpty()) {
-            String defaultStacFilter = layerParameters.getDefaultStacFilter();
-            return (stacFilter == null || stacFilter.isEmpty()) ? defaultStacFilter : defaultStacFilter + " AND " + stacFilter;
+    protected void addDefaultStacQuery(SearchRequest request) {
+        if (layerParameters.getLayerQuery() != null && !layerParameters.getLayerQuery().isEmpty()) {
+            String layerQuery = layerParameters.getLayerQuery();
+            if (request.getQuery() == null || request.getQuery().isEmpty()) {
+                String query = (request.getQuery() == null || request.getQuery().isEmpty()) ? layerQuery : layerQuery + " AND " + request.getQuery();
+            }
         }
-        return stacFilter;
     }
 
     /*
@@ -305,11 +323,17 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
         return (Filter) query.getFilter().accept(blacklistingFilterVisitor, null);
     }
 
+    protected StacFeatureCollection getFeatureCollection(SearchRequest request) throws StacException {
+        log.debug("STAC request: " + request);
+        resultSet = buildResultSet(client.search(request));
+        return new StacFeatureCollection(resultSet, getName(), layerParameters, getSchema());
+    }
+
     /**
-     * Responsible for "filtering" the filter in order to remove unsupported filter operations. Presently this largely
+     * Responsible for "filtering" the query in order to remove unsupported query operations. Presently this largely
      * means removing BBOX from requests from the image store (these are handled elsewhere). Unfortunately since CQL
-     * (the elastic search version that is) does not support any form of identity or tautological filter, so we need
-     * to tear apart ands/ors/etc. in order to remove BBOX and then use a single filter if need be.
+     * (the elastic search version that is) does not support any form of identity or tautological query, so we need
+     * to tear apart ands/ors/etc. in order to remove BBOX and then use a single query if need be.
      */
     protected class FilteringFilterVisitor extends DuplicatingFilterVisitor {
         @Override

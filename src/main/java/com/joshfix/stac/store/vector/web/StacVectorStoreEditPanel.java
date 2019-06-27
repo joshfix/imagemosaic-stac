@@ -70,8 +70,8 @@ public class StacVectorStoreEditPanel extends StoreEditPanel {
 
         TextParamPanel stacFilterPanel = new TextParamPanel(
                 "stacFilterPanel",
-                new PropertyModel(paramsModel, KeyNames.STAC_CQL_FILTER_KEY),
-                new ResourceModel(KeyNames.STAC_CQL_FILTER_KEY, FieldNames.STAC_FILTER_NAME),
+                new PropertyModel(paramsModel, KeyNames.STAC_QUERY_KEY),
+                new ResourceModel(KeyNames.STAC_QUERY_KEY, FieldNames.STAC_QUERY_NAME),
                 false);
         stacFilterPanel.setOutputMarkupId(true);
         add(stacFilterPanel);
@@ -79,7 +79,7 @@ public class StacVectorStoreEditPanel extends StoreEditPanel {
         TextParamPanel maxFeaturesPanel = new TextParamPanel(
                 "maxFeaturesPanel",
                 new PropertyModel(paramsModel, KeyNames.MAX_FEATURES_KEY),
-                new ResourceModel("maxFeatures", FieldNames.MAX_FEATURES_NAME),
+                new ResourceModel(KeyNames.MAX_FEATURES_KEY, FieldNames.MAX_FEATURES_NAME),
                 true);
         maxFeaturesPanel.setOutputMarkupId(true);
         add(maxFeaturesPanel);
@@ -109,13 +109,13 @@ public class StacVectorStoreEditPanel extends StoreEditPanel {
                             Map<String, Serializable> params = store.getParameters();
                             Map<String, Serializable> connectionParams = dataStore.getConnectionParameters();
                             connectionParams.put(KeyNames.USE_BBOX_KEY, params.get(FieldNames.USE_BBOX_NAME));
-                            connectionParams.put(KeyNames.STAC_CQL_FILTER_KEY, params.get(FieldNames.STAC_FILTER_NAME));
+                            connectionParams.put(KeyNames.STAC_QUERY_KEY, params.get(FieldNames.STAC_QUERY_NAME));
                             connectionParams.put(KeyNames.COLLECTION_KEY, params.get(FieldNames.COLLECTION_NAME));
                             connectionParams.put(KeyNames.ASSET_ID_KEY, params.get(FieldNames.ASSET_ID_NAME));
                         } else {
                             Map<String, Serializable> connectionParams = dataStore.getConnectionParameters();
                             connectionParams.put(KeyNames.USE_BBOX_KEY, LayerParameters.USE_BBOX_DEFAULT);
-                            connectionParams.put(KeyNames.STAC_CQL_FILTER_KEY, "");
+                            connectionParams.put(KeyNames.STAC_QUERY_KEY, "");
                             connectionParams.put(KeyNames.COLLECTION_KEY, LayerParameters.COLLECTION_DEFAULT);
                             connectionParams.put(KeyNames.MAX_FEATURES_KEY, LayerParameters.MAX_FEATURES_DEFAULT);
                             connectionParams.put(KeyNames.ASSET_ID_KEY, "");

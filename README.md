@@ -57,7 +57,7 @@ originating OGC request.
 EPSG:4326, the unit of resolution is degrees/pixel.  The x default is 360.0 / GRID_WIDTH and the y default is 
 180.0 / GRID_HEIGHT.
 * STAC collection (optional) - If specified, STAC results will be restricted to items within this collection.
-* STAC query filter (optional) - If specified, a query filter value will be applied to the search.  Note that STAC has 
+* STAC query (optional) - If specified, a query filter value will be applied to the search.  Note that STAC has 
 not yet decided on a query filter language.  Requests against Staccato currently support CQL.
 * Suggested Tile Size - Controls the tile size of the input granules as well as the tile size of the output mosaic. It 
 consists of two positive integers separated by a comma, like 512,512.
@@ -65,3 +65,18 @@ consists of two positive integers separated by a comma, like 512,512.
 ## STAC Vector Store Configuration
 
 forthcoming
+
+## Dynamic Requests
+
+When making an OGC request to GeoServer, a `CQL_FILTER` parameter may be supplied.  The plugin currently supports two 
+CQL parameters that directly correspond to STAC query parameters: `ids` and `query`.  The `ids` parameter accepts a 
+comma separated string of STAC item IDs.  The `query` parameter will be passed directly to the STAC service.  Note that 
+STAC has not yet decided on a query filter language.  Requests against 
+[Staccato](https://stac.boundlessgeo.io/stac/search) currently support 
+[CQL](http://docs.geotools.org/latest/userguide/library/cql/index.html).
+
+## Caveats
+
+Remote imagery takes time to retrieve.  The larger the value of max granules specified, the greater the number of images 
+that need to be fetched and mosaicked.  If the size of the imagery in the dataset is large, the number of max granules 
+should be smaller.  If the size of the imagery is small, a larger number of max granules can be specified.

@@ -17,7 +17,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class LayerParameters {
 
-    private String defaultStacFilter = "eo:cloud_cover < 0.1";
+    private String layerQuery;
     private String urlFilter;
     private String assetId = "B2";
     private String collection = COLLECTION_DEFAULT;
@@ -42,7 +42,7 @@ public class LayerParameters {
 
         for (GeneralParameterValue parameter : parameters) {
             if (parameter.getDescriptor() != null && parameter.getDescriptor().getName().getCode().equals(StacMosaicFormat.STAC_FILTER.getName().getCode())) {
-                this.defaultStacFilter = (String) ((DefaultParameterDescriptor) parameter.getDescriptor()).getDefaultValue();
+                this.layerQuery = (String) ((DefaultParameterDescriptor) parameter.getDescriptor()).getDefaultValue();
             } else if (parameter.getDescriptor() != null && parameter.getDescriptor().getName().getCode().equals(StacMosaicFormat.ASSET_ID.getName().getCode())) {
                 this.assetId = (String) ((DefaultParameterDescriptor) parameter.getDescriptor()).getDefaultValue();
             } else if (parameter.getDescriptor() != null && parameter.getDescriptor().getName().getCode().equals(StacMosaicFormat.USE_BBOX.getName().getCode())) {
@@ -64,7 +64,7 @@ public class LayerParameters {
     }
 
     public LayerParameters(Map<String, Serializable> params) {
-        defaultStacFilter = (String) params.get(StacDataStoreFactorySpi.STAC_CQL_FILTER.key);
+        layerQuery = (String) params.get(StacDataStoreFactorySpi.STAC_QUERY.key);
         useBbox = (boolean) params.get(StacDataStoreFactorySpi.USE_BBOX.key);
         collection = (String) params.get(StacDataStoreFactorySpi.COLLECTION.key);
         maxFeatures = Integer.valueOf((String) params.get(StacDataStoreFactorySpi.MAX_FEATURES.key));

@@ -8,7 +8,7 @@ public interface FieldNames {
 
     String MOSAIC_STORE_NAME = "STAC Mosaic Store";
     String PARAM_FILTER_NAME = "Filter";
-    String STAC_FILTER_NAME = "STAC query filter";
+    String STAC_QUERY_NAME = "STAC query";
     String USE_BBOX_NAME = "Include request BBOX in STAC request";
     String MAX_GRANULES_NAME = "Maximum number of granules to load";
     String MAX_RESOLUTION_PIXEL_SIZE_X_NAME = "Maximum resolution pixel size (X)";

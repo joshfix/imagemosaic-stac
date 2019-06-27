@@ -276,7 +276,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
              */
 /*
             SearchRequest searchRequest = new SearchRequest();
-            searchRequest.setFilter(StacFeatureSource.FILTER);
+            searchRequest.setQuery(StacFeatureSource.QUERY);
             searchRequest.setLimit(1);
             ItemCollection itemCollection = client.search(searchRequest);
             Item item = itemCollection.getFeatures().get(0);

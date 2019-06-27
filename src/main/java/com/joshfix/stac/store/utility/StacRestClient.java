@@ -67,9 +67,7 @@ public class StacRestClient {
 
     public Map search(SearchRequest request) throws StacException {
         log.debug("search method called. Request: " + request.toString());
-        byte[] requestBytes = jsonUtils.toJson(request);
-        RequestBody rb = RequestBody.create(JSON, requestBytes);
-        Request req = new Request.Builder().url(itemsUrlBuilder.build()).post(rb).build();
+        Request req = buildOkHttpRequest(request).build();
         log.debug("Executing search request to {}", req.url().toString());
         Response response = null;
         try {
@@ -87,9 +85,7 @@ public class StacRestClient {
 
     public byte[] searchBytes(SearchRequest request) throws StacException {
         log.debug("searchBytes method called. Request: " + request.toString());
-        byte[] requestBytes = jsonUtils.toJson(request);
-        RequestBody rb = RequestBody.create(JSON, requestBytes);
-        Request req = new Request.Builder().url(itemsUrlBuilder.build()).post(rb).build();
+        Request req = buildOkHttpRequest(request).build();
         log.debug("Executing search request to {}", req.url().toString());
         Response response = null;
         try {
@@ -106,9 +102,8 @@ public class StacRestClient {
 
     public ItemIterator searchStreaming(SearchRequest request) throws StacException {
         log.debug("searchStreaming method called. Request: " + request.toString());
-        byte[] requestBytes = jsonUtils.toJson(request);
-        RequestBody rb = RequestBody.create(JSON, requestBytes);
-        Request req = new Request.Builder().url(itemsUrlBuilder.build()).post(rb).header("Accept", "text/event-stream").build();
+        Request.Builder builder = buildOkHttpRequest(request);
+        Request req = builder.header("Accept", "text/event-stream").build();
         log.debug("Executing search request to {}", req.url().toString());
 
         Response response;
@@ -127,7 +122,12 @@ public class StacRestClient {
         }
 
         return new ItemIterator(response, jsonUtils);
+    }
 
+    protected Request.Builder buildOkHttpRequest(SearchRequest request) throws StacException {
+        byte[] requestBytes = jsonUtils.toJson(request);
+        RequestBody rb = RequestBody.create(JSON, requestBytes);
+        return new Request.Builder().url(itemsUrlBuilder.build()).post(rb);
     }
 
     public Map searchById(String id) throws StacException {
@@ -141,29 +141,6 @@ public class StacRestClient {
             return jsonUtils.fromJsonBytes(body);
         } catch (Exception e) {
             throw new StacException("An error was encountered while executing search. " + e.getLocalizedMessage());
-        } finally {
-            if (null != response) {
-                response.body().close();
-            }
-        }
-    }
-
-    private boolean executeInternal(Request req) throws StacException {
-        Response response = null;
-        try {
-            log.debug("Executing put request to {}", req.url().toString());
-            response = client.newCall(req).execute();
-
-            if (response.isSuccessful()) {
-                log.debug("Add item succeeded");
-                return true;
-            }
-            log.debug("Executing request failed");
-            log.debug("Response from server: {}", response.body().string());
-            log.debug("Response code from server: {}", response.code());
-            return false;
-        } catch (IOException ex) {
-            throw new StacException("Error adding item: " + ex.getMessage());
         } finally {
             if (null != response) {
                 response.body().close();

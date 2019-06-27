@@ -36,7 +36,7 @@ public class StacMosaicFormat extends AbstractGridFormat {
             new DefaultParameterDescriptor<>(FieldNames.NAMESPACE_NAME, NameImpl.class, null, null);
 
     public static final ParameterDescriptor<String> STAC_FILTER =
-            new DefaultParameterDescriptor(FieldNames.STAC_FILTER_NAME, String.class, null, null);
+            new DefaultParameterDescriptor(FieldNames.STAC_QUERY_NAME, String.class, null, null);
 
     public static final ParameterDescriptor<Boolean> USE_BBOX =
             new DefaultParameterDescriptor(FieldNames.USE_BBOX_NAME, Boolean.class, null, LayerParameters.USE_BBOX_DEFAULT);

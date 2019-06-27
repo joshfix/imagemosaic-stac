@@ -1,7 +1,6 @@
 package com.joshfix.stac.store.vector.feature;
 
 import com.joshfix.stac.store.mosaic.LayerParameters;
-import com.joshfix.stac.store.utility.ItemIterator;
 import com.joshfix.stac.store.utility.SearchRequest;
 import com.joshfix.stac.store.utility.StacException;
 import com.joshfix.stac.store.utility.StacRestClient;
@@ -30,32 +29,24 @@ public class StacMosaicVectorFeatureSource extends StacFeatureSource {
         }
 
         SearchRequest request = initializeStacSearchRequest(query);
-        String stacFilter = null;
-        CqlWrapper cqlWrapper = getStacFilter(query);
-
-        if (layerParameters.getCollection() != null) {
-            request.setCollections(new String[]{layerParameters.getCollection()});
-        }
-
+        CqlFilter cqlFilter = parseCqlFilters(query);
 
         // if there are no CQL filters, layer filters, and we're requesting max features, it's likely geotools gathering
         // metadata before the layer is built, so there is no reason to make huge queries
-        if (null == cqlWrapper && query.getMaxFeatures() == Integer.MAX_VALUE && layerParameters.getMaxGranules() == 0) {
-            // && (layerParameters.getDefaultStacFilter() == null || layerParameters.getDefaultStacFilter().isEmpty())) {
-            stacFilter = FILTER;
+        if (null == cqlFilter && query.getMaxFeatures() == Integer.MAX_VALUE && layerParameters.getMaxGranules() == 0) {
+            request.setQuery(QUERY);
             request.setLimit(1);
-        } else if (null != cqlWrapper) {
-            // this means there is a query filter or a request for specific item IDs, so it should be a legit service request
-            if (cqlWrapper.getFilter() != null && !cqlWrapper.getFilter().isBlank()) {
-                request.setQuery(cqlWrapper.getFilter());
+        } else if (null != cqlFilter) {
+            // this means there is a query query or a request for specific item IDs, so it should be a legit service request
+            if (cqlFilter.getQuery() != null && !cqlFilter.getQuery().isBlank()) {
+                request.setQuery(cqlFilter.getQuery());
             }
-            if (cqlWrapper.getIds() != null && !cqlWrapper.getIds().isBlank()) {
-                request.setIds(cqlWrapper.getIds().split(","));
+            if (cqlFilter.getIds() != null && !cqlFilter.getIds().isBlank()) {
+                request.setIds(cqlFilter.getIds().split(","));
             }
             request.setLimit(layerParameters.getMaxGranules());
 
-        } else if (request.getBbox() == null && request.getLimit() == layerParameters.getMaxFeatures()
-                && (stacFilter == null || stacFilter.isEmpty())) {
+        } else if (request.getBbox() == null && request.getLimit() == layerParameters.getMaxFeatures()) {
             // DescribeFeature does not give us an id or any positional info, so if we have a request for max features and
             // no bounding box, just restrict it to a single image.  note this is not going to return valid results.
             request.setLimit(1);
@@ -67,18 +58,12 @@ public class StacMosaicVectorFeatureSource extends StacFeatureSource {
             request.setCollections(new String[]{layerParameters.getCollection()});
         }
 
-        stacFilter = addDefaultStacFilter(stacFilter);
-        request.setQuery(stacFilter);
-        log.debug("STAC request: " + request);
-
+        addDefaultStacQuery(request);
         try {
-            ItemIterator itemIterator = client.searchStreaming(request);
-            resultSet = buildResultSet(itemIterator);
-            return new StacFeatureCollection(resultSet, getName(), layerParameters, getSchema());
+            return getFeatureCollection(request);
         } catch (StacException e) {
             throw new IOException(e);
         }
+
     }
-
-
 }

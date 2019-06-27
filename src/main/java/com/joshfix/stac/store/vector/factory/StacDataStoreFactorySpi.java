@@ -1,6 +1,7 @@
 package com.joshfix.stac.store.vector.factory;
 
 import com.joshfix.stac.store.FieldNames;
+import com.joshfix.stac.store.KeyNames;
 import com.joshfix.stac.store.mosaic.LayerParameters;
 import com.joshfix.stac.store.utility.StacRestClient;
 import org.geotools.data.DataStore;
@@ -24,39 +25,31 @@ public abstract class StacDataStoreFactorySpi implements DataStoreFactorySpi {
     protected LayerParameters layerParameters;
 
     public static final String DBTYPE_STRING = "stac-store-feature-vector";
-    public static final Param DBTYPE = new Param("dbtype", String.class,
+    public static final Param DBTYPE = new Param(KeyNames.DBTYPE_KEY, String.class,
             "Fixed value '" + DBTYPE_STRING + "'", true, DBTYPE_STRING,
             Collections.singletonMap(Parameter.LEVEL, "program"));
 
-    public static final String SERVICE_URL_KEY = "serviceUrl";
-    public static final Param SERVICE_URL = new Param(SERVICE_URL_KEY, String.class,
+    public static final Param SERVICE_URL = new Param(KeyNames.SERVICE_URL_KEY, String.class,
             "Service URL", true);
 
-    public static final String NAMESPACE_KEY = "namespace";
-    public static final Param NAMESPACE = new Param(NAMESPACE_KEY, NameImpl.class,
+    public static final Param NAMESPACE = new Param(KeyNames.NAMESPACE_KEY, NameImpl.class,
             "uri to a the namespace", false, null, // not required
             new KVP(Param.LEVEL, "advanced"));
 
-    public static final String COLLECTION_KEY = "collection";
-    public static final Param COLLECTION = new Param(COLLECTION_KEY, String.class, FieldNames.COLLECTION_NAME,
+    public static final Param COLLECTION = new Param(KeyNames.COLLECTION_KEY, String.class, FieldNames.COLLECTION_NAME,
             true, LayerParameters.COLLECTION_DEFAULT, new KVP(Param.LEVEL, "advanced"));
 
-    public static final String STAC_CQL_FILTER_KEY = "stacFilter";
-    public static final Param STAC_CQL_FILTER = new Param(STAC_CQL_FILTER_KEY, String.class,
-            FieldNames.STAC_FILTER_NAME, false, "", new KVP(Param.LEVEL, "advanced"));
+    public static final Param STAC_QUERY = new Param(KeyNames.STAC_QUERY_KEY, String.class,
+            FieldNames.STAC_QUERY_NAME, false, "", new KVP(Param.LEVEL, "advanced"));
 
-    public static final String ASSET_ID_KEY = "assetId";
-    public static final Param ASSET_ID = new Param(ASSET_ID_KEY, String.class,
+    public static final Param ASSET_ID = new Param(KeyNames.ASSET_ID_KEY, String.class,
             FieldNames.ASSET_ID_NAME, false, "", new KVP(Param.LEVEL, "advanced"));
 
-    public static final String MAX_FEATURES_KEY = "maxFeatures";
-    public static final Param MAX_FEATURES = new Param(MAX_FEATURES_KEY, Integer.class, FieldNames.MAX_FEATURES_NAME,
+    public static final Param MAX_FEATURES = new Param(KeyNames.MAX_FEATURES_KEY, Integer.class, FieldNames.MAX_FEATURES_NAME,
             true, LayerParameters.MAX_FEATURES_DEFAULT, new KVP(Param.LEVEL, "advanced"));
 
-    public static final String USE_BBOX_KEY = "useBbox";
-    public static final Param USE_BBOX = new Param(USE_BBOX_KEY, Boolean.class, FieldNames.USE_BBOX_NAME,
+    public static final Param USE_BBOX = new Param(KeyNames.USE_BBOX_KEY, Boolean.class, FieldNames.USE_BBOX_NAME,
             true, LayerParameters.USE_BBOX_DEFAULT, new KVP(Param.LEVEL, "advanced"));
-
 
     public StacDataStoreFactorySpi() {}
 
@@ -89,7 +82,7 @@ public abstract class StacDataStoreFactorySpi implements DataStoreFactorySpi {
                 NAMESPACE,
                 SERVICE_URL,
                 COLLECTION,
-                STAC_CQL_FILTER,
+                STAC_QUERY,
                 MAX_FEATURES,
                 USE_BBOX,
         };

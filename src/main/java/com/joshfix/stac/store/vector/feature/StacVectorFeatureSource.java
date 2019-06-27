@@ -1,7 +1,6 @@
 package com.joshfix.stac.store.vector.feature;
 
 import com.joshfix.stac.store.mosaic.LayerParameters;
-import com.joshfix.stac.store.utility.ItemIterator;
 import com.joshfix.stac.store.utility.SearchRequest;
 import com.joshfix.stac.store.utility.StacException;
 import com.joshfix.stac.store.utility.StacRestClient;
@@ -37,21 +36,21 @@ public class StacVectorFeatureSource extends StacFeatureSource {
         }
 
         String stacFilter = null;
-        CqlWrapper cqlWrapper = getStacFilter(query);
+        CqlFilter cqlFilter = parseCqlFilters(query);
 
         // if there are no CQL filters, layer filters, and we're requesting max features, it's likely geotools gathering
         // metadata before the layer is built, so there is no reason to make huge queries
-        if (null == cqlWrapper && query.getMaxFeatures() == Integer.MAX_VALUE
-                && (layerParameters.getDefaultStacFilter() == null || layerParameters.getDefaultStacFilter().isEmpty() ||
+        if (null == cqlFilter && query.getMaxFeatures() == Integer.MAX_VALUE
+                && (layerParameters.getLayerQuery() == null || layerParameters.getLayerQuery().isEmpty() ||
                 layerParameters.getCollection() == null || layerParameters.getCollection().isBlank())) {
-            stacFilter = FILTER;
+            stacFilter = QUERY;
             // setting the limit to 1 or 2 always results in some invalid width exception. for some reason setting this to 3 works
             request.setLimit(1);
-        } else if (null != cqlWrapper && cqlWrapper.getFilter() != null && !cqlWrapper.getFilter().isBlank()) {
-            request.setQuery(cqlWrapper.getFilter());
+        } else if (null != cqlFilter && cqlFilter.getQuery() != null && !cqlFilter.getQuery().isBlank()) {
+            request.setQuery(cqlFilter.getQuery());
 
-            if (cqlWrapper.getIds() != null && !cqlWrapper.getIds().isBlank()) {
-                request.setIds(cqlWrapper.getIds().split(","));
+            if (cqlFilter.getIds() != null && !cqlFilter.getIds().isBlank()) {
+                request.setIds(cqlFilter.getIds().split(","));
             }
             request.setLimit(1);
         } else {
@@ -62,12 +61,8 @@ public class StacVectorFeatureSource extends StacFeatureSource {
             request.setCollections(new String[]{layerParameters.getCollection()});
         }
         request.setQuery(stacFilter);
-        log.debug("STAC request: " + request);
-
         try {
-            ItemIterator itemIterator = client.searchStreaming(request);
-            resultSet = buildResultSet(itemIterator);
-            return new StacFeatureCollection(resultSet, getName(), layerParameters, getSchema());
+            return getFeatureCollection(request);
         } catch (StacException e) {
             throw new IOException(e);
         }
