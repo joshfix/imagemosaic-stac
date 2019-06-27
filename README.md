@@ -38,9 +38,8 @@ The next step is to publish a layer backed by the store.
 
 ![alt text](./screenshots/layer.png "Mosaic Layer")
 
-Starting out the `Bounding Boxes` section, set the "Native Bounding Box" to global extents: -180.0, -90.0, 180.0, 90.0.  
-The Lat/Lon Bounding Box should be set to the same value and can be filled in by clicking "Compute from native bounds" 
-after filling in the "Native Bounding Box" fields.
+Starting out the `Bounding Boxes` section, ensure the "Native Bounding Box" and the "Lat/Lon Bounding Box" are set to 
+global extents: -180.0, -90.0, 180.0, 90.0.  
 
 The `Coverage Parameters` section contains several custom fields which are detailed below:
 
