@@ -1,15 +1,15 @@
 package com.joshfix.stac.store.mosaic;
 
-import com.joshfix.stac.store.utility.AssetLocator;
-import com.joshfix.stac.store.utility.SearchRequest;
-import com.joshfix.stac.store.utility.StacException;
-import com.joshfix.stac.store.utility.StacRestClient;
+import com.joshfix.stac.store.utility.*;
 import com.joshfix.stac.store.vector.factory.StacDataStoreFactorySpi;
 import com.joshfix.stac.store.vector.factory.StacMosaicVectorDataStoreFactorySpi;
 import lombok.extern.slf4j.Slf4j;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridEnvelope2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
+import org.geotools.coverage.grid.io.GridCoverage2DReader;
+import org.geotools.coverageio.jp2k.JP2KFormat;
+import org.geotools.coverageio.jp2k.JP2KReader;
 import org.geotools.data.DataSourceException;
 import org.geotools.feature.NameImpl;
 import org.geotools.gce.geotiff.GeoTiffReader;
@@ -20,7 +20,6 @@ import org.geotools.gce.imagemosaic.catalog.GranuleCatalog;
 import org.geotools.gce.imagemosaic.catalog.index.Indexer;
 import org.geotools.gce.imagemosaic.catalog.index.IndexerUtils;
 import org.geotools.gce.imagemosaic.granulecollector.ReprojectingSubmosaicProducerFactory;
-import org.geotools.geometry.GeneralEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.util.factory.Hints;
 import org.opengis.coverage.grid.Format;
@@ -43,12 +42,13 @@ import java.util.Properties;
 @Slf4j
 public class StacMosaicReader extends AbstractGridCoverage2DReader {
 
-    private MathTransform transform;
-    private StacRestClient client;
-    private String collection;
-    private static Map sampleItem;
-    private MosaicConfigurationProperties configProps = new MosaicConfigurationProperties();
-    private LayerParameters layerParameters;
+    protected MathTransform transform;
+    protected StacRestClient client;
+    protected String collection;
+    protected static Map sampleItem;
+    protected MosaicConfigurationProperties configProps = new MosaicConfigurationProperties();
+    protected LayerParameters layerParameters;
+    protected AssetDescriptor assetDescriptor;
 
     public StacMosaicReader(URI uri) throws DataSourceException {
         this(uri, null);
@@ -66,7 +66,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
 
         client = new StacRestClient(uri);
 
-        GeoTiffReader sampleReader = getGeoTiffReader(null);
+        GridCoverage2DReader sampleReader = getGridCoverageReader(null);
         this.originalEnvelope = sampleReader.getOriginalEnvelope();
         //this.crs = sampleReader.getCoordinateReferenceSystem();
 
@@ -119,8 +119,15 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
         props.put(Utils.Prop.TYPENAME, configProps.getTypename());
         props.put(Utils.Prop.LOCATION_ATTRIBUTE, configProps.getLocationAttribute());
 
+        switch (assetDescriptor.getType()) {
+            case "image/jp2":
+                props.put(Utils.Prop.SUGGESTED_FORMAT, JP2KFormat.class.getCanonicalName());
+            case "image/vnd.stac.geotiff":
+            case "image/x.geotiff":
+                props.put(Utils.Prop.SUGGESTED_FORMAT, UrlStringGeoTiffFormat.class.getCanonicalName());
+        }
+
         props.put(Utils.Prop.SUGGESTED_IS_SPI, UrlStringImageInputStreamSpi.class.getCanonicalName());
-        props.put(Utils.Prop.SUGGESTED_FORMAT, UrlStringGeoTiffFormat.class.getCanonicalName());
         props.put(Utils.Prop.SUGGESTED_SPI, MosaicConfigurationProperties.SUGGESTED_SPI);
 
         props.put(Utils.Prop.CACHING, false);
@@ -166,7 +173,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
     }
 
     @SuppressWarnings("unchecked")
-    public GeoTiffReader getGeoTiffReader(String itemId) throws DataSourceException {
+    public GridCoverage2DReader getGridCoverageReader(String itemId) throws DataSourceException {
 
         Map item = getItem();
 
@@ -174,33 +181,36 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
             throw new DataSourceException("Unable to find item with id '" + itemId + "' in STAC.");
         }
 
-        String imageUrl = null;
         try {
             // TODO: need to determine  a smart way to dynamically grab a legitimate band for the sample image
-            imageUrl = AssetLocator.getRandomAssetImageUrl(item);
+            //imageUrl = AssetLocator.getRandomAssetImageUrl(item);
+            assetDescriptor = AssetLocator.getRandomAssetImageUrl(item);
         } catch (Exception e) {
             throw new DataSourceException("Unable to determine the image URL from the STAC item.");
         }
 
-        if (imageUrl == null) {
+        if (assetDescriptor == null) {
             throw new IllegalArgumentException("Unable to determine the image URL from the STAC item.");
         }
-
+/*
         int protocolDelimiter = imageUrl.indexOf(":");
         if (protocolDelimiter <= 0) {
             throw new IllegalArgumentException("Unable to determine the protocol STAC item's asset URL: " + imageUrl);
         }
 
         String protocol = imageUrl.substring(0, protocolDelimiter).toLowerCase();
-
+*/
         try {
-            switch (protocol) {
-                case "http":
-                case "https":
-                    return new GeoTiffReader(imageUrl);
+            switch (assetDescriptor.getType()) {
+                case "image/jp2":
+                    return new JP2KReader(assetDescriptor.getUrl());
+                case "image/vnd.stac.geotiff":
+                case "image/x.geotiff":
+                    return new GeoTiffReader(assetDescriptor.getUrl());
             }
+
         } catch (Exception e) {
-            throw new IllegalArgumentException("Unable to build GeoTIFF reader for URL: " + imageUrl, e);
+            throw new IllegalArgumentException("Unable to build GeoTIFF reader for URL: " + assetDescriptor.getUrl(), e);
         }
 
         throw new DataSourceException("Unable to create GeoTiff reader for STAC item ID: " + itemId);
@@ -249,11 +259,11 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
             searchRequest.setLimit(1);
             ItemCollection itemCollection = client.search(searchRequest);
             Item item = itemCollection.getFeatures().get(0);
-            return getGeoTiffReader(item.getId()).getOriginalGridToWorld("geotiff_coverage", pixInCell);
+            return getGridCoverageReader(item.getId()).getOriginalGridToWorld("geotiff_coverage", pixInCell);
 */
-            transform = getGeoTiffReader(null).getOriginalGridToWorld("geotiff_coverage", pixInCell);
+            transform = getGridCoverageReader(null).getOriginalGridToWorld("geotiff_coverage", pixInCell);
             return transform;
-            //return getGeoTiffReader(null).getOriginalGridToWorld(coverageName, pixInCell);
+            //return getGridCoverageReader(null).getOriginalGridToWorld(coverageName, pixInCell);
         } catch (DataSourceException e) {
             throw new IllegalStateException(e);
         }

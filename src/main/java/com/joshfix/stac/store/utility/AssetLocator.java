@@ -20,7 +20,7 @@ public class AssetLocator {
         return assetObj == null ? null : jsonUtils.getAsset(assetObj).getHref();
     }
 
-    public static String getRandomAssetImageUrl(Map item) {
+    public static AssetDescriptor getRandomAssetImageUrl(Map item) {
         if (null == item.get("assets")) {
             return null;
         }
@@ -31,12 +31,16 @@ public class AssetLocator {
 
             if (asset.containsKey("type")) {
 
-                String type = asset.get("type").toString();
-                if (type.equalsIgnoreCase("image/vnd.stac.geotiff") ||
-                        type.equalsIgnoreCase("image/x.geotiff") ||
-                        type.toLowerCase().contains("geotiff")) {
+                String type = asset.get("type").toString().toLowerCase();
+                if (type.equals("image/vnd.stac.geotiff") ||
+                        type.equals("image/x.geotiff") ||
+                        type.contains("geotiff") ||
+                        type.equals("image/jp2")) {
 
-                    return asset.get("href").toString();
+                    AssetDescriptor assetDescriptor = new AssetDescriptor();
+                    assetDescriptor.setType(type);
+                    assetDescriptor.setUrl(asset.get("href").toString());
+                    return assetDescriptor;
                 }
 
             }
