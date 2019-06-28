@@ -14,6 +14,8 @@ more enhancements on the horizon that will overcome many of the assumptions made
 imagery are located on a file system local to the GeoServer deployment. As the underlying code evolves to be more cloud 
 friendly, so will this plugin. 
 
+![Alt Text](./screenshots/demo.gif)
+
 ## Usage
 
 Simply include the imagemosaic-stac jar file in your geoserver deployment.  The raster store and vector store 

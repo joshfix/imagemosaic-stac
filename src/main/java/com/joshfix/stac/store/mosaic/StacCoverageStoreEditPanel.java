@@ -47,14 +47,14 @@ public class StacCoverageStoreEditPanel extends StoreEditPanel {
             if (url.indexOf("?") > 0) {
                 String[] urlAndDefaultItemId = url.split("\\?");
                 model.setUrl(urlAndDefaultItemId[0]);
-                model.setDefaultItemId(urlAndDefaultItemId[1]);
+                model.setCollection(urlAndDefaultItemId[1]);
             } else {
                 model.setUrl(url);
             }
         } else {
             // TODO remove
             model.setUrl("https://stac.boundlessgeo.io/stac/search");
-            model.setDefaultItemId("LC81780802019134LGN00");
+            model.setCollection("landsat-8-l1");
         }
 
         TextParamPanel urlPanel = new TextParamPanel(
@@ -64,12 +64,12 @@ public class StacCoverageStoreEditPanel extends StoreEditPanel {
                 true);
         add(urlPanel);
 
-        TextParamPanel defaultItemIdPanel = new TextParamPanel(
-                "defaultItemIdPanel",
-                new PropertyModel(model, "defaultItemId"),
-                new ResourceModel("defaultItemId", "STAC default item ID"),
+        TextParamPanel collectionPanel = new TextParamPanel(
+                "collectionPanel",
+                new PropertyModel(model, "collection"),
+                new ResourceModel("collection", "STAC collection"),
                 true);
-        add(defaultItemIdPanel);
+        add(collectionPanel);
 
     }
 
@@ -81,7 +81,7 @@ public class StacCoverageStoreEditPanel extends StoreEditPanel {
     static class StacModel implements Serializable {
         private CoverageStoreInfoImpl coverageStoreInfo;
         private String url;
-        private String defaultItemId = "default";
+        private String collection;
 
         public StacModel(CoverageStoreInfoImpl coverageStoreInfo) {
             this.coverageStoreInfo = coverageStoreInfo;
@@ -89,7 +89,7 @@ public class StacCoverageStoreEditPanel extends StoreEditPanel {
 
         private void populateFormModel() {
             if (null != url) {
-                coverageStoreInfo.setURL(url + "?" + defaultItemId);
+                coverageStoreInfo.setURL(url + "?" + collection);
             }
         }
 
@@ -98,8 +98,8 @@ public class StacCoverageStoreEditPanel extends StoreEditPanel {
             populateFormModel();
         }
 
-        public void setDefaultItemId(String defaultItemId) {
-            this.defaultItemId = defaultItemId;
+        public void setCollection(String collection) {
+            this.collection = collection;
             populateFormModel();
         }
     }

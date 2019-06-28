@@ -53,8 +53,8 @@ public class LayerParameters {
                 maxResolutionPixelSizeX = (double) ((DefaultParameterDescriptor) parameter.getDescriptor()).getDefaultValue();
             } else if (parameter.getDescriptor() != null && parameter.getDescriptor().getName().getCode().equals(StacMosaicFormat.MAX_RESOLUTION_PIXEL_SIZE_Y.getName().getCode())) {
                 maxResolutionPixelSizeY = (double) ((DefaultParameterDescriptor) parameter.getDescriptor()).getDefaultValue();
-            } else if (parameter.getDescriptor() != null && parameter.getDescriptor().getName().getCode().equals(StacMosaicFormat.COLLECTION.getName().getCode())) {
-                collection = (String) ((DefaultParameterDescriptor) parameter.getDescriptor()).getDefaultValue();
+            //} else if (parameter.getDescriptor() != null && parameter.getDescriptor().getName().getCode().equals(StacMosaicFormat.COLLECTION.getName().getCode())) {
+            //    collection = (String) ((DefaultParameterDescriptor) parameter.getDescriptor()).getDefaultValue();
             } else if (parameter.getDescriptor() != null && parameter.getDescriptor().getName().getCode().equals(StacMosaicFormat.GRID_WIDTH.getName().getCode())) {
                 gridWidth = (int) ((DefaultParameterDescriptor) parameter.getDescriptor()).getDefaultValue();
             } else if (parameter.getDescriptor() != null && parameter.getDescriptor().getName().getCode().equals(StacMosaicFormat.GRID_HEIGHT.getName().getCode())) {

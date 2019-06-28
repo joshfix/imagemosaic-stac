@@ -50,10 +50,6 @@ public class StacMosaicFormat extends AbstractGridFormat {
     public static final ParameterDescriptor<Integer> MAX_RESOLUTION_PIXEL_SIZE_Y =
             new DefaultParameterDescriptor(FieldNames.MAX_RESOLUTION_PIXEL_SIZE_Y_NAME, Double.class, null, LayerParameters.MAX_RESOLUTION_Y_DEFAULT);
 
-    public static final ParameterDescriptor<String> COLLECTION =
-            new DefaultParameterDescriptor(FieldNames.COLLECTION_NAME, String.class, null, LayerParameters.COLLECTION_DEFAULT);
-
-    // TODO: don't use "B2" as default asset id :)
     public static final ParameterDescriptor<String> ASSET_ID =
             new DefaultParameterDescriptor(FieldNames.ASSET_ID_NAME, String.class, null, "B2");
 
@@ -87,7 +83,7 @@ public class StacMosaicFormat extends AbstractGridFormat {
                         INPUT_TRANSPARENT_COLOR,
                         SUGGESTED_TILE_SIZE,
                         PARAM_FILTER,
-                        COLLECTION,
+                        //COLLECTION,
                         //BANDS,
                         GRID_WIDTH,
                         GRID_HEIGHT

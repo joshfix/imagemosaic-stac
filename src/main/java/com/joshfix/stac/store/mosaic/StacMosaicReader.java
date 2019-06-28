@@ -21,22 +21,17 @@ import org.geotools.gce.imagemosaic.catalog.index.Indexer;
 import org.geotools.gce.imagemosaic.catalog.index.IndexerUtils;
 import org.geotools.gce.imagemosaic.granulecollector.ReprojectingSubmosaicProducerFactory;
 import org.geotools.geometry.GeneralEnvelope;
-import org.geotools.parameter.Parameter;
 import org.geotools.referencing.CRS;
 import org.geotools.util.factory.Hints;
 import org.opengis.coverage.grid.Format;
-import org.opengis.filter.Filter;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -50,8 +45,8 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
 
     private MathTransform transform;
     private StacRestClient client;
-    private String defaultItemId = "default";
-    private static Map defaultItem;
+    private String collection;
+    private static Map sampleItem;
     private MosaicConfigurationProperties configProps = new MosaicConfigurationProperties();
     private LayerParameters layerParameters;
 
@@ -64,21 +59,27 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
 
         String uriString = uri.toString();
         if (uriString.indexOf("?") > 0) {
-            String[] uriAndDefaultItemId = uriString.split("\\?");
-            //source = new URI(uriAndDefaultItemId[0]);
-            source = uriAndDefaultItemId[0];
-            defaultItemId = uriAndDefaultItemId[1];
+            String[] uriAndCollection = uriString.split("\\?");
+            source = uriAndCollection[0];
+            collection = uriAndCollection[1];
         }
 
         client = new StacRestClient(uri);
 
+        GeoTiffReader sampleReader = getGeoTiffReader(null);
+        this.originalEnvelope = sampleReader.getOriginalEnvelope();
+        //this.crs = sampleReader.getCoordinateReferenceSystem();
+
         try {
-            originalEnvelope = new GeneralEnvelope(CRS.decode(configProps.getCrs()));
+            CoordinateReferenceSystem crs = CRS.decode(configProps.getCrs());
+            MathTransform mt = CRS.findMathTransform(originalEnvelope.getCoordinateReferenceSystem(), crs, true);
+            originalEnvelope = CRS.transform(mt, originalEnvelope);
+            originalEnvelope.setCoordinateReferenceSystem(crs);
             originalEnvelope.setEnvelope(-180.0, -90.0, 180.0, 90.0);
+            this.crs = crs;
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         this.originalGridRange = new GridEnvelope2D(
                 0,
                 0,
@@ -91,38 +92,16 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
         return new StacMosaicFormat();
     }
 
-    private boolean mosaic = true;
-
     @Override
     @SuppressWarnings("unchecked")
     public GridCoverage2D read(GeneralParameterValue[] parameters) throws IOException {
-        if (mosaic) {
-            layerParameters = new LayerParameters(parameters);
-            try {
-                return getStacMosaicReader(layerParameters).read(configProps.getTypename(), parameters);
-            } catch (FactoryException e) {
-                throw new RuntimeException("Factory exception while creating store. "
-                        + "Most likely an issue with the EPSG database.", e);
-            }
-        } else {
-            String itemId = null;
-            for (GeneralParameterValue parameter : parameters) {
-                if (parameter.getDescriptor().equals(StacMosaicFormat.PARAM_FILTER)) {
-                    Filter filter = ((Parameter<Filter>) parameter).getValue();
-                    if (filter instanceof PropertyIsEqualTo) {
-                        PropertyIsEqualTo eq = (PropertyIsEqualTo) filter;
-                        if (eq.getExpression1() instanceof PropertyName &&
-                                ((PropertyName) eq.getExpression1()).getPropertyName().equals("item_id") &&
-                                eq.getExpression2() instanceof Literal) {
-                            itemId = ((Literal) eq.getExpression2()).getValue().toString();
-                        }
-                    }
-
-                }
-            }
-
-            GridCoverage2D g = getGeoTiffReader(itemId).read(parameters);
-            return getGeoTiffReader(itemId).read(parameters);
+        layerParameters = new LayerParameters(parameters);
+        layerParameters.setCollection(collection);
+        try {
+            return getStacMosaicReader(layerParameters).read(configProps.getTypename(), parameters);
+        } catch (FactoryException e) {
+            throw new RuntimeException("Factory exception while creating store. "
+                    + "Most likely an issue with the EPSG database.", e);
         }
     }
 
@@ -230,40 +209,20 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
 
     public Map getItem() throws DataSourceException {
         // if no item id was provided, use the default item id
-        if (null != defaultItem) {
-            return defaultItem;
+        if (null != sampleItem) {
+            return sampleItem;
         }
         try {
-            SearchRequest request = new SearchRequest();
-            request.setLimit(1);
+            SearchRequest request = new SearchRequest()
+                    .limit(1)
+                    .collections(new String[]{collection});
             Map<String, Object> itemCollection = client.search(request);
-            List<Map> items = (List<Map>)itemCollection.get("features");
+            List<Map> items = (List<Map>) itemCollection.get("features");
             if (!items.isEmpty()) {
-                defaultItem = items.get(0);
+                sampleItem = items.get(0);
             }
 
-            return defaultItem;
-        } catch (StacException e) {
-            throw new DataSourceException(e.getMessage());
-        }
-    }
-
-    public Map getItem(String itemId) throws DataSourceException {
-        // if no item id was provided, use the default item id
-        if (null == itemId || itemId.isEmpty()) {
-            // if we already have the default item, just return it
-            if (null != defaultItem) {
-                return defaultItem;
-            }
-            itemId = defaultItemId;
-        }
-        try {
-            Map item = client.searchById(itemId);
-            // if we just got the default item for the first time, save it so we don't have to search for it again
-            if (null == defaultItem && itemId.equalsIgnoreCase(defaultItemId)) {
-                defaultItem = item;
-            }
-            return item;
+            return sampleItem;
         } catch (StacException e) {
             throw new DataSourceException(e.getMessage());
         }
