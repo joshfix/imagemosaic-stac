@@ -200,12 +200,17 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
 
         String protocol = imageUrl.substring(0, protocolDelimiter).toLowerCase();
 */
+
+
         try {
             switch (assetDescriptor.getType()) {
                 case "image/jp2":
                     return new JP2KReader(assetDescriptor.getUrl());
                 case "image/vnd.stac.geotiff":
                 case "image/x.geotiff":
+                case "image/geo+tiff":
+                case "image/geotiff":
+                case "image/tiff":
                     return new GeoTiffReader(assetDescriptor.getUrl());
             }
 

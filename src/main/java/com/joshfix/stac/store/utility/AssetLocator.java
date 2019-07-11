@@ -34,9 +34,10 @@ public class AssetLocator {
                 String type = asset.get("type").toString().toLowerCase();
                 if (type.equals("image/vnd.stac.geotiff") ||
                         type.equals("image/x.geotiff") ||
-                        type.contains("geotiff") ||
+                        type.equals("image/geo+tiff") ||
+                        type.equals("image/geotiff") ||
+                        type.equals("image/tiff") ||
                         type.equals("image/jp2")) {
-
                     AssetDescriptor assetDescriptor = new AssetDescriptor();
                     assetDescriptor.setType(type);
                     assetDescriptor.setUrl(asset.get("href").toString());

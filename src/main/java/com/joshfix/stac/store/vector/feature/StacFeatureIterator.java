@@ -99,15 +99,22 @@ public class StacFeatureIterator implements SimpleFeatureIterator, FeatureReader
             properties = (Map) item.get("properties");
             for (Entry<String, Object> property : properties.entrySet()) {
                 if (!IGNORE_PROPERTIES.contains(property.getKey())) {
-                    // TODO: not all fields are Strings!  determine the correct class to use here
-                    typeBuilder.add(property.getKey(), String.class);
+                    if (property.getValue() == null) {
+                        typeBuilder.add(property.getKey(), String.class);
+                    } else if (property.getValue().getClass().isAssignableFrom(String.class)) {
+                        typeBuilder.add(property.getKey(), String.class);
+                    } else if (property.getValue().getClass().isAssignableFrom(Integer.class)) {
+                        typeBuilder.add(property.getKey(), Integer.class);
+                    } else if (property.getValue().getClass().isAssignableFrom(Double.class)) {
+                        typeBuilder.add(property.getKey(), Double.class);
+                    } else if (property.getValue().getClass().isAssignableFrom(Boolean.class)) {
+                        typeBuilder.add(property.getKey(), Boolean.class);
+                    } else {
+                        typeBuilder.add(property.getKey(), String.class);
+                    }
                 }
             }
         }
-
-
-
-
 
         if (item.get("geometry") != null) {
             //TODO: set the geometry type from the actual geometry type value???
