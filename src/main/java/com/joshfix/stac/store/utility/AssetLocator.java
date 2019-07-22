@@ -30,23 +30,42 @@ public class AssetLocator {
             Map<String, Object> asset = (Map) entry.getValue();
 
             if (asset.containsKey("type")) {
-
-                String type = asset.get("type").toString().toLowerCase();
-                if (type.equals("image/vnd.stac.geotiff") ||
-                        type.equals("image/x.geotiff") ||
-                        type.equals("image/geo+tiff") ||
-                        type.equals("image/geotiff") ||
-                        type.equals("image/tiff") ||
-                        type.equals("image/jp2")) {
-                    AssetDescriptor assetDescriptor = new AssetDescriptor();
-                    assetDescriptor.setType(type);
-                    assetDescriptor.setUrl(asset.get("href").toString());
-                    return assetDescriptor;
-                }
-
+               return describeAsset(asset);
             }
         }
         return null;
+    }
+
+    public static AssetDescriptor getAsset(Map item, String id) {
+        if (null == item.get("assets")) {
+            return null;
+        }
+
+        Map<String, Object> assets = (Map) item.get("assets");
+
+        if (!assets.containsKey(id)) {
+            return null;
+        }
+
+        Map asset = (Map) assets.get(id);
+        return describeAsset(asset);
+    }
+
+    public static AssetDescriptor describeAsset(Map asset) {
+        String type = asset.get("type").toString().toLowerCase();
+        if (type.equals("image/vnd.stac.geotiff") ||
+                type.equals("image/x.geotiff") ||
+                type.equals("image/geo+tiff") ||
+                type.equals("image/geotiff") ||
+                type.equals("image/tiff")) {
+                //type.equals("image/jp2")) {
+            return new AssetDescriptor()
+                    .type(type)
+                    .url(asset.get("href").toString());
+
+        }
+        return null;
+
     }
 
 }

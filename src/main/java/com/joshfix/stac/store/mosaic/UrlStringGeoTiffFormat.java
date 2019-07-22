@@ -28,14 +28,12 @@ public class UrlStringGeoTiffFormat extends GeoTiffFormat {
     public GeoTiffReader getReader(Object source, Hints hints) {
         if (source instanceof URL) {
             URL url = (URL) source;
-            try {
-                return new GeoTiffReader(url.toString(), hints);
-            } catch (DataSourceException e) {
-                if (LOGGER.isLoggable(Level.WARNING))
-                    LOGGER.log(Level.WARNING, e.getLocalizedMessage(), e);
-                return null;
-            }
+            return getReader(url.toString(), hints);
         }
+        return null;
+    }
+
+    public GeoTiffReader getReader(String source, Hints hints) {
         try {
             return new GeoTiffReader(source, hints);
         } catch (DataSourceException e) {

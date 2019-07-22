@@ -1,6 +1,6 @@
 package com.joshfix.stac.store.vector.store;
 
-import com.joshfix.stac.store.mosaic.LayerParameters;
+import com.joshfix.stac.store.LayerParameters;
 import com.joshfix.stac.store.utility.StacRestClient;
 import com.joshfix.stac.store.vector.feature.StacVectorFeatureSource;
 import org.opengis.feature.type.Name;

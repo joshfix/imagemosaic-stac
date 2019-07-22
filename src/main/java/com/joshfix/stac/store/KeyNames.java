@@ -6,13 +6,15 @@ package com.joshfix.stac.store;
  */
 public interface KeyNames {
 
-    String DBTYPE_KEY = "dbtype";
-    String SERVICE_URL_KEY = "serviceUrl";
-    String ITEM_TYPE_KEY = "itemType";
-    String STAC_QUERY_KEY = "stacQuery";
-    String MAX_FEATURES_KEY = "maxFeatures";
-    String USE_BBOX_KEY = "useBbox";
-    String NAMESPACE_KEY = "namespace";
-    String COLLECTION_KEY = "collection";
-    String ASSET_ID_KEY = "assetId";
+    String DBTYPE = "dbtype";
+    String SERVICE_URL = "serviceUrl";
+    String STORE_STAC_FILTER = "storeStacFilter";
+    String MAX_FEATURES = "maxFeatures";
+    String USE_BBOX = "useBbox";
+    String NAMESPACE = "namespace";
+    String AOI_FILTER = "aoiFilter";
+    String SAMPLE_ITEM_ID = "sampleItemId";
+    String URL = "url";
+    String COLLECTION = "collection";
+    String ASSET_ID = "assetId";
 }

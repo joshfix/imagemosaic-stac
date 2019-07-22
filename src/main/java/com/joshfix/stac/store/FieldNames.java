@@ -6,20 +6,19 @@ package com.joshfix.stac.store;
  */
 public interface FieldNames {
 
-    String MOSAIC_STORE_NAME = "STAC Mosaic Store";
-    String PARAM_FILTER_NAME = "Filter";
-    String STAC_QUERY_NAME = "STAC query";
-    String USE_BBOX_NAME = "Include request BBOX in STAC request";
-    String MAX_GRANULES_NAME = "Maximum number of granules to load";
-    String MAX_RESOLUTION_PIXEL_SIZE_X_NAME = "Maximum resolution pixel size (X)";
-    String MAX_RESOLUTION_PIXEL_SIZE_Y_NAME = "Maximum resolution pixel size (Y)";
-    String ITEM_TYPE_NAME = "Item type";
-    String GRID_WIDTH_NAME = "Grid width (pixels)";
-    String GRID_HEIGHT_NAME = "Grid height (pixels)";
-    String MAX_FEATURES_NAME = "Maximum number of features to load";
-    String SERVICE_URL_NAME = "Service URL";
-    String NAMESPACE_NAME = "URI to a the namespace";
-    String COLLECTION_NAME = "STAC collection";
-    String ASSET_ID_NAME = "Asset ID";
+    String MOSAIC_STORE = "STAC Mosaic Store";
+    String PARAM_FILTER = "Filter";
+    String LAYER_STAC_FILTER = "STAC CQL filter";
+    String STORE_STAC_FILTER = "STAC CQL filter";
+    String USE_BBOX = "Include request BBOX in STAC request";
+    String MAX_GRANULES = "Maximum number of granules to load";
+    String MAX_FEATURES = "Maximum number of features to load";
+    String SERVICE_URL = "Service URL";
+    String NAMESPACE = "URI to a the namespace";
+    String AOI_FILTER = "AOI";
+    String COLLECTION = "STAC collection";
+    String ASSET_ID = "Asset ID";
+    String SAMPLE_ITEM_ID = "STAC sample item ID";
+    String URL = "STAC URL";
 
 }

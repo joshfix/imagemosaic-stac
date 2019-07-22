@@ -2,7 +2,7 @@ package com.joshfix.stac.store.vector.factory;
 
 import com.joshfix.stac.store.FieldNames;
 import com.joshfix.stac.store.KeyNames;
-import com.joshfix.stac.store.mosaic.LayerParameters;
+import com.joshfix.stac.store.LayerParameters;
 import com.joshfix.stac.store.utility.StacRestClient;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFactorySpi;
@@ -24,31 +24,31 @@ public abstract class StacDataStoreFactorySpi implements DataStoreFactorySpi {
     protected StacRestClient client;
     protected LayerParameters layerParameters;
 
-    public static final String DBTYPE_STRING = "stac-store-feature-vector";
-    public static final Param DBTYPE = new Param(KeyNames.DBTYPE_KEY, String.class,
-            "Fixed value '" + DBTYPE_STRING + "'", true, DBTYPE_STRING,
+    public static final String DBTYPE_ID = "stac-store-feature-vector";
+    public static final Param DBTYPE = new Param(KeyNames.DBTYPE, String.class,
+            "Fixed value '" + DBTYPE_ID + "'", true, DBTYPE_ID,
             Collections.singletonMap(Parameter.LEVEL, "program"));
 
-    public static final Param SERVICE_URL = new Param(KeyNames.SERVICE_URL_KEY, String.class,
-            "Service URL", true);
+    public static final Param SERVICE_URL = new Param(KeyNames.SERVICE_URL, String.class,
+            FieldNames.SERVICE_URL, true);
 
-    public static final Param NAMESPACE = new Param(KeyNames.NAMESPACE_KEY, NameImpl.class,
-            "uri to a the namespace", false, null, // not required
+    public static final Param NAMESPACE = new Param(KeyNames.NAMESPACE, NameImpl.class,
+            FieldNames.NAMESPACE, false, null, // not required
             new KVP(Param.LEVEL, "advanced"));
 
-    public static final Param COLLECTION = new Param(KeyNames.COLLECTION_KEY, String.class, FieldNames.COLLECTION_NAME,
+    public static final Param COLLECTION = new Param(KeyNames.COLLECTION, String.class, FieldNames.COLLECTION,
             true, LayerParameters.COLLECTION_DEFAULT, new KVP(Param.LEVEL, "advanced"));
 
-    public static final Param STAC_QUERY = new Param(KeyNames.STAC_QUERY_KEY, String.class,
-            FieldNames.STAC_QUERY_NAME, false, "", new KVP(Param.LEVEL, "advanced"));
+    public static final Param STAC_CQL_FILTER = new Param(KeyNames.STORE_STAC_FILTER, String.class,
+            FieldNames.STORE_STAC_FILTER, false, "", new KVP(Param.LEVEL, "advanced"));
 
-    public static final Param ASSET_ID = new Param(KeyNames.ASSET_ID_KEY, String.class,
-            FieldNames.ASSET_ID_NAME, false, "", new KVP(Param.LEVEL, "advanced"));
+    public static final Param AOI_FILTER = new Param(KeyNames.AOI_FILTER, String.class,
+            FieldNames.AOI_FILTER, false, "", new KVP(Param.LEVEL, "advanced"));
 
-    public static final Param MAX_FEATURES = new Param(KeyNames.MAX_FEATURES_KEY, Integer.class, FieldNames.MAX_FEATURES_NAME,
+    public static final Param MAX_FEATURES = new Param(KeyNames.MAX_FEATURES, Integer.class, FieldNames.MAX_FEATURES,
             true, LayerParameters.MAX_FEATURES_DEFAULT, new KVP(Param.LEVEL, "advanced"));
 
-    public static final Param USE_BBOX = new Param(KeyNames.USE_BBOX_KEY, Boolean.class, FieldNames.USE_BBOX_NAME,
+    public static final Param USE_BBOX = new Param(KeyNames.USE_BBOX, Boolean.class, FieldNames.USE_BBOX,
             true, LayerParameters.USE_BBOX_DEFAULT, new KVP(Param.LEVEL, "advanced"));
 
     public StacDataStoreFactorySpi() {}
@@ -77,12 +77,12 @@ public abstract class StacDataStoreFactorySpi implements DataStoreFactorySpi {
     @Override
     public Param[] getParametersInfo() {
         return new Param[]{
-                ASSET_ID,
+                AOI_FILTER,
                 DBTYPE,
                 NAMESPACE,
                 SERVICE_URL,
                 COLLECTION,
-                STAC_QUERY,
+                STAC_CQL_FILTER,
                 MAX_FEATURES,
                 USE_BBOX,
         };
@@ -91,7 +91,7 @@ public abstract class StacDataStoreFactorySpi implements DataStoreFactorySpi {
     @Override
     public boolean canProcess(Map<String, Serializable> params) {
         try {
-            return DBTYPE_STRING.equals(DBTYPE.lookUp(params)) && SERVICE_URL.lookUp(params) != null;
+            return DBTYPE_ID.equals(DBTYPE.lookUp(params)) && SERVICE_URL.lookUp(params) != null;
         } catch (Exception e) {}
         return false;
     }

@@ -2,7 +2,7 @@ package com.joshfix.stac.store.vector.web;
 
 import com.joshfix.stac.store.FieldNames;
 import com.joshfix.stac.store.KeyNames;
-import com.joshfix.stac.store.mosaic.LayerParameters;
+import com.joshfix.stac.store.LayerParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.Form;
@@ -46,24 +46,24 @@ public class StacVectorStoreEditPanel extends StoreEditPanel {
 
         TextParamPanel assetIdPanel = new TextParamPanel(
                 "assetIdPanel",
-                new PropertyModel(paramsModel, KeyNames.ASSET_ID_KEY),
-                new ResourceModel(KeyNames.ASSET_ID_KEY, FieldNames.ASSET_ID_NAME),
+                new PropertyModel(paramsModel, KeyNames.ASSET_ID),
+                new ResourceModel(KeyNames.ASSET_ID, FieldNames.ASSET_ID),
                 true);
         assetIdPanel.setOutputMarkupId(true);
         add(assetIdPanel);
 
         TextParamPanel urlPanel = new TextParamPanel(
                 "urlPanel",
-                new PropertyModel(paramsModel, KeyNames.SERVICE_URL_KEY),
-                new ResourceModel(KeyNames.SERVICE_URL_KEY, FieldNames.SERVICE_URL_NAME),
+                new PropertyModel(paramsModel, KeyNames.SERVICE_URL),
+                new ResourceModel(KeyNames.SERVICE_URL, FieldNames.SERVICE_URL),
                 true);
         urlPanel.setOutputMarkupId(true);
         add(urlPanel);
 
         TextParamPanel collectionPanel = new TextParamPanel(
                 "collectionPanel",
-                new PropertyModel(paramsModel, KeyNames.COLLECTION_KEY),
-                new ResourceModel(KeyNames.COLLECTION_KEY, FieldNames.COLLECTION_NAME),
+                new PropertyModel(paramsModel, KeyNames.COLLECTION),
+                new ResourceModel(KeyNames.COLLECTION, FieldNames.COLLECTION),
                 true);
         collectionPanel.setOutputMarkupId(true);
         add(collectionPanel);
@@ -78,16 +78,16 @@ public class StacVectorStoreEditPanel extends StoreEditPanel {
 
         TextParamPanel maxFeaturesPanel = new TextParamPanel(
                 "maxFeaturesPanel",
-                new PropertyModel(paramsModel, KeyNames.MAX_FEATURES_KEY),
-                new ResourceModel(KeyNames.MAX_FEATURES_KEY, FieldNames.MAX_FEATURES_NAME),
+                new PropertyModel(paramsModel, KeyNames.MAX_FEATURES),
+                new ResourceModel(KeyNames.MAX_FEATURES, FieldNames.MAX_FEATURES),
                 true);
         maxFeaturesPanel.setOutputMarkupId(true);
         add(maxFeaturesPanel);
 
         CheckBoxParamPanel useBboxPanel = new CheckBoxParamPanel(
                 "useBboxPanel",
-                new PropertyModel(paramsModel, KeyNames.USE_BBOX_KEY),
-                new ResourceModel(KeyNames.USE_BBOX_KEY, FieldNames.USE_BBOX_NAME)
+                new PropertyModel(paramsModel, KeyNames.USE_BBOX),
+                new ResourceModel(KeyNames.USE_BBOX, FieldNames.USE_BBOX)
         );
         useBboxPanel.setOutputMarkupId(true);
         add(useBboxPanel);
@@ -108,17 +108,17 @@ public class StacVectorStoreEditPanel extends StoreEditPanel {
                             CoverageInfo store = coverages.getModelObject();
                             Map<String, Serializable> params = store.getParameters();
                             Map<String, Serializable> connectionParams = dataStore.getConnectionParameters();
-                            connectionParams.put(KeyNames.USE_BBOX_KEY, params.get(FieldNames.USE_BBOX_NAME));
+                            connectionParams.put(KeyNames.USE_BBOX, params.get(FieldNames.USE_BBOX));
                             connectionParams.put(KeyNames.STAC_QUERY_KEY, params.get(FieldNames.STAC_QUERY_NAME));
-                            connectionParams.put(KeyNames.COLLECTION_KEY, params.get(FieldNames.COLLECTION_NAME));
-                            connectionParams.put(KeyNames.ASSET_ID_KEY, params.get(FieldNames.ASSET_ID_NAME));
+                            connectionParams.put(KeyNames.COLLECTION, params.get(FieldNames.COLLECTION));
+                            connectionParams.put(KeyNames.ASSET_ID, params.get(FieldNames.ASSET_ID));
                         } else {
                             Map<String, Serializable> connectionParams = dataStore.getConnectionParameters();
-                            connectionParams.put(KeyNames.USE_BBOX_KEY, LayerParameters.USE_BBOX_DEFAULT);
+                            connectionParams.put(KeyNames.USE_BBOX, LayerParameters.USE_BBOX_DEFAULT);
                             connectionParams.put(KeyNames.STAC_QUERY_KEY, "");
-                            connectionParams.put(KeyNames.COLLECTION_KEY, LayerParameters.COLLECTION_DEFAULT);
-                            connectionParams.put(KeyNames.MAX_FEATURES_KEY, LayerParameters.MAX_FEATURES_DEFAULT);
-                            connectionParams.put(KeyNames.ASSET_ID_KEY, "");
+                            connectionParams.put(KeyNames.COLLECTION, LayerParameters.COLLECTION_DEFAULT);
+                            connectionParams.put(KeyNames.MAX_FEATURES, LayerParameters.MAX_FEATURES_DEFAULT);
+                            connectionParams.put(KeyNames.ASSET_ID, "");
                         }
 
                         target.add(stacFilterPanel);

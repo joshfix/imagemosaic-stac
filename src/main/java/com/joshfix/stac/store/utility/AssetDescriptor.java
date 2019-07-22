@@ -11,4 +11,14 @@ public class AssetDescriptor {
 
     private String type;
     private String url;
+
+    public AssetDescriptor type(String type) {
+        setType(type);
+        return this;
+    }
+
+    public AssetDescriptor url(String url) {
+        setUrl(url);
+        return this;
+    }
 }

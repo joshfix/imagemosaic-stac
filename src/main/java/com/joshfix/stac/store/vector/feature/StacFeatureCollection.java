@@ -1,6 +1,6 @@
 package com.joshfix.stac.store.vector.feature;
 
-import com.joshfix.stac.store.mosaic.LayerParameters;
+import com.joshfix.stac.store.LayerParameters;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.geometry.jts.ReferencedEnvelope;

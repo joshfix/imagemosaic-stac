@@ -1,6 +1,6 @@
 package com.joshfix.stac.store.vector.factory;
 
-import com.joshfix.stac.store.mosaic.LayerParameters;
+import com.joshfix.stac.store.LayerParameters;
 import com.joshfix.stac.store.utility.StacRestClient;
 import com.joshfix.stac.store.vector.store.StacMosaicVectorDataStore;
 import org.geotools.data.DataStore;

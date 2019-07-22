@@ -1,6 +1,7 @@
 package com.joshfix.stac.store.vector.factory;
 
-import com.joshfix.stac.store.mosaic.LayerParameters;
+import com.joshfix.stac.store.KeyNames;
+import com.joshfix.stac.store.LayerParameters;
 import com.joshfix.stac.store.utility.StacClientFactory;
 import com.joshfix.stac.store.vector.store.StacVectorDataStore;
 import org.geotools.data.DataStore;
@@ -10,12 +11,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
-import static com.joshfix.stac.store.KeyNames.SERVICE_URL_KEY;
-
 /**
  * @author joshfix
  */
 public class StacVectorDataStoreFactorySpi extends StacDataStoreFactorySpi {
+
+    public static final String DISPLAY_NAME = "STAC Vector Store";
 
     public StacVectorDataStoreFactorySpi() {
         super();
@@ -23,8 +24,8 @@ public class StacVectorDataStoreFactorySpi extends StacDataStoreFactorySpi {
 
     @Override
     public DataStore createDataStore(Map<String, Serializable> params) throws IOException {
-        if (null == client && params != null && params.containsKey(SERVICE_URL_KEY)) {
-            client = StacClientFactory.create((String) params.get(SERVICE_URL_KEY));
+        if (null == client && params != null && params.containsKey(KeyNames.SERVICE_URL)) {
+            client = StacClientFactory.create((String) params.get(KeyNames.SERVICE_URL));
         }
         if (null == layerParameters) {
             layerParameters = new LayerParameters(params);
@@ -34,7 +35,7 @@ public class StacVectorDataStoreFactorySpi extends StacDataStoreFactorySpi {
 
     @Override
     public String getDisplayName() {
-        return "STAC Vector Store";
+        return DISPLAY_NAME;
     }
 
     @Override

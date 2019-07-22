@@ -1,6 +1,6 @@
 package com.joshfix.stac.store.vector.feature;
 
-import com.joshfix.stac.store.mosaic.LayerParameters;
+import com.joshfix.stac.store.LayerParameters;
 import com.joshfix.stac.store.mosaic.MosaicConfigurationProperties;
 import com.joshfix.stac.store.utility.AssetLocator;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +35,15 @@ public class StacFeatureIterator implements SimpleFeatureIterator, FeatureReader
     protected SimpleFeature next;
     protected GeometryFactory geomFac = new GeometryFactory();
     protected Name name;
+    public static CoordinateReferenceSystem FEATURE_CRS;
 
     static {
         IGNORE_PROPERTIES.add("class");
+        try {
+            FEATURE_CRS = CRS.decode("EPSG:4326");
+        } catch (FactoryException e) {
+            throw new RuntimeException("Error decoding EPSG:4326.  Something is wrong in the world.", e);
+        }
     }
 
     public StacFeatureIterator() {
@@ -83,14 +89,7 @@ public class StacFeatureIterator implements SimpleFeatureIterator, FeatureReader
         }
         SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
         typeBuilder.setName(name);
-
-
-        try {
-            CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
-            typeBuilder.setCRS(crs);
-        } catch (FactoryException e) {
-            e.printStackTrace();
-        }
+        typeBuilder.setCRS(FEATURE_CRS);
 
         Map<String, Object> properties = null;
 
@@ -179,7 +178,9 @@ public class StacFeatureIterator implements SimpleFeatureIterator, FeatureReader
 
         }
 
-        featureBuilder.set(MosaicConfigurationProperties.DEFAULT_LOCATION_ATTRIBUTE_VALUE, AssetLocator.getAssetImageUrl(item, layerParameters.getAssetId()));
+        featureBuilder.set(
+                MosaicConfigurationProperties.DEFAULT_LOCATION_ATTRIBUTE_VALUE,
+                AssetLocator.getAssetImageUrl(item, layerParameters.getAssetId()));
         return featureBuilder.buildFeature((String) item.get("id"));
     }
 

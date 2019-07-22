@@ -1,6 +1,6 @@
 package com.joshfix.stac.store.vector.feature;
 
-import com.joshfix.stac.store.mosaic.LayerParameters;
+import com.joshfix.stac.store.LayerParameters;
 import lombok.extern.slf4j.Slf4j;
 import org.opengis.feature.type.Name;
 
