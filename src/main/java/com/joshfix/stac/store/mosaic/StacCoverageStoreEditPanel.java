@@ -65,6 +65,8 @@ public class StacCoverageStoreEditPanel extends StoreEditPanel {
                     case KeyNames.SAMPLE_ITEM_ID:
                         model.setSampleItemId(param.getValue());
                         break;
+                    case KeyNames.ASSET_ID:
+                        model.setAssetId(param.getValue());
                     case KeyNames.STORE_STAC_FILTER:
                         model.setStoreStacFilter(param.getValue());
                         break;
@@ -86,6 +88,13 @@ public class StacCoverageStoreEditPanel extends StoreEditPanel {
                 true);
         add(urlPanel);
 
+        TextParamPanel<String> assetIdPanel = new TextParamPanel<>(
+                KeyNames.ASSET_ID + "Panel",
+                new PropertyModel<>(model, KeyNames.ASSET_ID),
+                new ResourceModel(KeyNames.ASSET_ID, FieldNames.ASSET_ID),
+                true);
+        add(assetIdPanel);
+
         TextParamPanel<String> collectionPanel = new TextParamPanel<>(
                 KeyNames.COLLECTION + "Panel",
                 new PropertyModel<>(model, KeyNames.COLLECTION),
@@ -100,12 +109,12 @@ public class StacCoverageStoreEditPanel extends StoreEditPanel {
                 false);
         add(sampleItemIdPanel);
 
-        TextParamPanel<String> stacFilterPanel = new TextParamPanel<>(
+        TextParamPanel<String> storeStacFilterPanel = new TextParamPanel<>(
                 KeyNames.STORE_STAC_FILTER + "Panel",
                 new PropertyModel<>(model, KeyNames.STORE_STAC_FILTER),
                 new ResourceModel(KeyNames.STORE_STAC_FILTER, FieldNames.STORE_STAC_FILTER),
                 false);
-        add(stacFilterPanel);
+        add(storeStacFilterPanel);
 
     }
 

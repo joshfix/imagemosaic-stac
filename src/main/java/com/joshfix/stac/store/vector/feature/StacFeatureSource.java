@@ -23,6 +23,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import java.awt.RenderingHints.Key;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.joshfix.stac.store.mosaic.MosaicConfigurationProperties.DEFAULT_TYPENAME_VALUE;
 
@@ -39,7 +40,6 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
     protected ReferencedEnvelope referencedEnvelope;
     protected static Map<String, SimpleFeatureType> featureTypeMap = new HashMap<>();
     protected QueryCapabilities queryCapabilities;
-    protected Set<Map> resultSet;
     protected static CoordinateReferenceSystem ENVELOPE_CRS = null;
 
     static {
@@ -72,19 +72,12 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
     }
 
     @Override
-    public StacFeatureCollection getFeatures(Query query) throws IOException {
-        SearchRequest request = StacRequestBuilder.build(query, layerParameters);
-        try {
-            return getFeatureCollection(request);
-        } catch (StacException e) {
-            throw new IOException(e);
-        }
-
-    }
+    public abstract StacFeatureCollection getFeatures(Query query) throws IOException;
 
     protected StacFeatureCollection getFeatureCollection(SearchRequest request) throws StacException {
         log.debug("STAC request: " + request);
-        resultSet = buildResultSet(client.search(request));
+        Set<Map> resultSet = buildResultSet(client.search(request));
+        log.debug("Built collection with " + resultSet.size() + " items.");
         return new StacFeatureCollection(resultSet, getName(), layerParameters, getSchema());
     }
 
@@ -165,7 +158,7 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
 
             try {
                 ItemIterator itemIterator = client.searchStreaming(req);
-                resultSet = buildResultSet(itemIterator);
+                Set<Map> resultSet = buildResultSet(itemIterator);
                 itemIterator.close();
 
                 StacSchemaFeatureIterator it = new StacSchemaFeatureIterator(resultSet, getName(), layerParameters);
@@ -190,6 +183,11 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
     }
 
     protected Set<Map> buildResultSet(Map stacResponse) {
+        Set<Map<String, Object>> resultSet = new HashSet((List) stacResponse.get("features"));
+        List<String> ids = resultSet.stream()
+                .map(item -> (String)item.get("id"))
+                .collect(Collectors.toList());
+        log.debug("Items: " + Arrays.toString(ids.toArray()));
         return new HashSet((List) stacResponse.get("features"));
     }
 

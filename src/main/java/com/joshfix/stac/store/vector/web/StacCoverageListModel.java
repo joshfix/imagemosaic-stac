@@ -1,5 +1,6 @@
 package com.joshfix.stac.store.vector.web;
 
+import com.joshfix.stac.store.FieldNames;
 import com.joshfix.stac.store.mosaic.StacMosaicFormat;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.geoserver.catalog.CoverageInfo;
@@ -20,7 +21,7 @@ public class StacCoverageListModel extends LoadableDetachableModel<List<Coverage
     protected List<CoverageInfo> load() {
         List<CoverageInfo> coverages = new ArrayList<>();
         for (CoverageInfo coverageStore : GeoServerApplication.get().getCatalog().getCoverages()) {
-            if (coverageStore.getNativeFormat().equals(StacMosaicFormat.NAME)) {
+            if (coverageStore.getNativeFormat().equals(FieldNames.MOSAIC_STORE)) {
                 coverages.add(coverageStore);
             }
         }

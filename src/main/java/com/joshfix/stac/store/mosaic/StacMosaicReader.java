@@ -34,10 +34,12 @@ import org.geotools.util.factory.Hints;
 import org.opengis.coverage.grid.Format;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
+import javax.measure.Unit;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -56,7 +58,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
     protected String collection;
     protected String sampleItemId;
     protected String assetId;
-    protected static Map sampleItem;
+    protected Map sampleItem;
     protected StacRestClient client;
     protected double[][] resolutions;
     protected String storeStacFilter;
@@ -113,12 +115,44 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
                 getGridCoverageReader(sampleItemId) :
                 getGridCoverageReader(getRandomItem());
 
-        crs = sampleReader.getCoordinateReferenceSystem();
+        this.originalEnvelope = sampleReader.getOriginalEnvelope();
+
+        try {
+            CoordinateReferenceSystem crs = CRS.decode(configProps.getCrs());
+            MathTransform mt = CRS.findMathTransform(originalEnvelope.getCoordinateReferenceSystem(), crs, true);
+            originalEnvelope = CRS.transform(mt, originalEnvelope);
+            originalEnvelope.setCoordinateReferenceSystem(crs);
+            originalEnvelope.setEnvelope(-180.0, -90.0, 180.0, 90.0);
+            this.crs = crs;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
             resolutions = sampleReader.getResolutionLevels();
         } catch (Exception e) {
             throw new DataSourceException("Error reading resolution levels from sample image.", e);
+        }
+
+        // need to find a better, more consistent way to use the coordinate system to determine what the units of resolution are
+        Unit unit = sampleReader.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getUnit();
+        String unitSymbol = unit.getSymbol();
+
+        if (null == unitSymbol) {
+            unit.getSystemUnit().getSymbol();
+        }
+
+        // convert meters (at the equator) to radians
+        switch (unitSymbol) {
+            case "m":
+            case "meter":
+            case "metre":
+            case "meters":
+            case "metres":
+                // degrees = 360 * meters / (2*PI*radius)
+                resolutions[0][0] = (resolutions[0][0] * 360.0) / (2 * Math.PI * 6378137);
+                resolutions[0][1] = (resolutions[0][1] * 360.0) / (2 * Math.PI * 6378137);
+                break;
         }
 
         originalGridRange = new GridEnvelope2D(
@@ -190,6 +224,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
     protected GridCoverage2D getCoverage(GeneralParameterValue[] parameters) throws IOException {
         try {
             LayerParameters layerParameters = new LayerParameters(parameters, storeStacFilter);
+            layerParameters.setAssetId(assetId);
             layerParameters.setCollection(collection);
             layerParameters.setResolutions(resolutions[0]);
             return getStacMosaicReader(layerParameters).read(configProps.getTypename(), parameters);
@@ -348,7 +383,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
         searchRequest.setLimit(1);
         try {
             Map itemCollection = client.search(searchRequest);
-            sampleItem = (Map)((Map)itemCollection.get("features")).get(0);
+            sampleItem = (Map) ((List) itemCollection.get("features")).get(0);
             return sampleItem;
         } catch (Exception e) {
             log.error("Error querying stac with filter " + stacQuery, e);

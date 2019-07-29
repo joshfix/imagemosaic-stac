@@ -9,6 +9,7 @@ public interface KeyNames {
     String DBTYPE = "dbtype";
     String SERVICE_URL = "serviceUrl";
     String STORE_STAC_FILTER = "storeStacFilter";
+    String LAYER_STAC_FILTER = "layerStacFilter";
     String MAX_FEATURES = "maxFeatures";
     String USE_BBOX = "useBbox";
     String NAMESPACE = "namespace";

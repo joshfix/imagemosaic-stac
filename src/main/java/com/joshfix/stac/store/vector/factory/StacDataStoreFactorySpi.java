@@ -39,7 +39,7 @@ public abstract class StacDataStoreFactorySpi implements DataStoreFactorySpi {
     public static final Param COLLECTION = new Param(KeyNames.COLLECTION, String.class, FieldNames.COLLECTION,
             true, LayerParameters.COLLECTION_DEFAULT, new KVP(Param.LEVEL, "advanced"));
 
-    public static final Param STAC_CQL_FILTER = new Param(KeyNames.STORE_STAC_FILTER, String.class,
+    public static final Param STORE_STAC_FILTER = new Param(KeyNames.STORE_STAC_FILTER, String.class,
             FieldNames.STORE_STAC_FILTER, false, "", new KVP(Param.LEVEL, "advanced"));
 
     public static final Param AOI_FILTER = new Param(KeyNames.AOI_FILTER, String.class,
@@ -82,7 +82,7 @@ public abstract class StacDataStoreFactorySpi implements DataStoreFactorySpi {
                 NAMESPACE,
                 SERVICE_URL,
                 COLLECTION,
-                STAC_CQL_FILTER,
+                STORE_STAC_FILTER,
                 MAX_FEATURES,
                 USE_BBOX,
         };

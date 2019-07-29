@@ -22,9 +22,9 @@
         <property name="icon" value="img/icons/geosilk/page_white_vector.png" />
         <property name="componentClass" value="com.joshfix.stac.store.vector.web.StacVectorStoreEditPanel" />
     </bean>
-
+<!--
     <bean id="aoiLayerListener" class="com.joshfix.stac.store.mosaic.listeners.AoiLayerListener">
         <constructor-arg value="catalog"/>
     </bean>
-
+-->
 </beans>

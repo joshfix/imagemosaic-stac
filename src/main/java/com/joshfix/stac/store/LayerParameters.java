@@ -29,7 +29,7 @@ public class LayerParameters {
     private boolean useBbox = USE_BBOX_DEFAULT;
     private String aoiFilter = AOI_FILTER_DEFAULT;
 
-    public static final int MAX_GRANULES_DEFAULT = 200;
+    public static final int MAX_GRANULES_DEFAULT = 3;
     public static final int MAX_FEATURES_DEFAULT = 10000;
     public static final boolean USE_BBOX_DEFAULT = true;
     public static final String AOI_FILTER_DEFAULT = "-180.0, -90.0, 180.0, 90.0";
@@ -57,7 +57,7 @@ public class LayerParameters {
         useBbox = (boolean) params.get(StacDataStoreFactorySpi.USE_BBOX.key);
         collection = (String) params.get(StacDataStoreFactorySpi.COLLECTION.key);
         maxFeatures = Integer.valueOf((String) params.get(StacDataStoreFactorySpi.MAX_FEATURES.key));
-        storeStacFilter = (String) params.get(StacDataStoreFactorySpi.STAC_CQL_FILTER.key);
+        storeStacFilter = (String) params.get(StacDataStoreFactorySpi.STORE_STAC_FILTER.key);
         aoiFilter = (String) params.get(StacDataStoreFactorySpi.AOI_FILTER.key);
     }
 

@@ -1,6 +1,8 @@
-package com.joshfix.stac.store.utility;
+package com.joshfix.stac.store.vector.feature;
 
 import com.joshfix.stac.store.LayerParameters;
+import com.joshfix.stac.store.utility.EnvelopeUtils;
+import com.joshfix.stac.store.utility.SearchRequest;
 import com.joshfix.stac.store.vector.feature.CqlFilter;
 import org.geotools.data.Query;
 import org.geotools.filter.AndImpl;
@@ -21,10 +23,21 @@ import java.util.List;
  */
 public class StacRequestBuilder {
 
-    public static SearchRequest build(Query query, LayerParameters layerParameters) {
+    public static SearchRequest buildMosaicRequest(Query query, LayerParameters layerParameters) {
         SearchRequest request = new SearchRequest();
-        buildStacRequestLimit(query, request, layerParameters);
+        buildStacMosaicRequestLimit(query, request, layerParameters);
+        buildRequest(query, request, layerParameters);
+        return request;
+    }
 
+    public static SearchRequest buildVectorRequest(Query query, LayerParameters layerParameters) {
+        SearchRequest request = new SearchRequest();
+        buildStacVectorRequestLimit(query, request, layerParameters);
+        buildRequest(query, request, layerParameters);
+        return request;
+    }
+
+    private static void buildRequest(Query query, SearchRequest request, LayerParameters layerParameters) {
         if (query.getStartIndex() != null) {
             request.setPage(query.getStartIndex());
         }
@@ -35,11 +48,10 @@ public class StacRequestBuilder {
 
         getRequestCqlFilter(query, request);
         buildStacFilters(request, layerParameters);
-        return request;
     }
 
 
-    public static void buildStacRequestLimit(Query query, SearchRequest request, LayerParameters layerParameters) {
+    public static void buildStacVectorRequestLimit(Query query, SearchRequest request, LayerParameters layerParameters) {
         if (query.getMaxFeatures() < Integer.MAX_VALUE) {
             request.setLimit(query.getMaxFeatures());
         } else if (query.getMaxFeatures() == Integer.MAX_VALUE) {
@@ -48,6 +60,18 @@ public class StacRequestBuilder {
 
         if (request.getLimit() == 0) {
             request.setLimit(layerParameters.getMaxFeatures());
+        }
+    }
+
+    public static void buildStacMosaicRequestLimit(Query query, SearchRequest request, LayerParameters layerParameters) {
+        if (query.getMaxFeatures() < Integer.MAX_VALUE) {
+            request.setLimit(query.getMaxFeatures());
+        } else if (query.getMaxFeatures() == Integer.MAX_VALUE) {
+            request.setLimit(layerParameters.getMaxGranules());
+        }
+
+        if (request.getLimit() == 0) {
+            request.setLimit(layerParameters.getMaxGranules());
         }
     }
 

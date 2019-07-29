@@ -72,12 +72,15 @@ public class StacRestClient {
         Response response = null;
         try {
             response = client.newCall(req).execute();
+            if (response.code() < 200 || response.code() > 299) {
+                log.error("Error querying STAC.  " + response.body().string());
+            }
             byte[] body = response.body().bytes();
             return jsonUtils.itemCollectionFromJson(body);
         } catch (Exception e) {
             throw new StacException("An error was encountered while executing search. " + e.getLocalizedMessage());
         } finally {
-            if (null != response) {
+            if (null != response && null != response.body()) {
                 response.body().close();
             }
         }
