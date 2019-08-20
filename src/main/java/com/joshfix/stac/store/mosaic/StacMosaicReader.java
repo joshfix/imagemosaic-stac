@@ -251,6 +251,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
         switch (assetDescriptor.getType()) {
             case "image/jp2":
                 props.put(Utils.Prop.SUGGESTED_FORMAT, JP2KFormat.class.getCanonicalName());
+                break;
             case "image/vnd.stac.geotiff":
             case "image/x.geotiff":
                 props.put(Utils.Prop.SUGGESTED_FORMAT, UrlStringGeoTiffFormat.class.getCanonicalName());
