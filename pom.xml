@@ -6,14 +6,14 @@
 
     <groupId>com.joshfix</groupId>
     <artifactId>imagemosaic-stac</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.2</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <gt.version>21.1</gt.version>
         <geoserver.version>2.15.1</geoserver.version>
-        <okhttp.version>3.14.2</okhttp.version>
+        <okhttp.version>4.1.0</okhttp.version>
     </properties>
 
     <dependencies>
@@ -56,6 +56,12 @@
             <groupId>org.geotools</groupId>
             <artifactId>gt-jp2k</artifactId>
             <version>${gt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.joshfix</groupId>
+            <artifactId>cog-image-reader</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

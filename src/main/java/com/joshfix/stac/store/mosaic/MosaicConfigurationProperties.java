@@ -17,7 +17,8 @@ public class MosaicConfigurationProperties {
     private String locationAttribute;
     private double[][] levels = new double[1][2];
 
-    public static final String SUGGESTED_SPI = "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi";
+    //public static final String SUGGESTED_SPI = "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi";
+    public static final String SUGGESTED_SPI = "it.geosolutions.imageioimpl.plugins.tiff.CogImageReaderSpi";
 
     // environment variable names
     public static final String PREFIX = "STAC_MOSAIC_";

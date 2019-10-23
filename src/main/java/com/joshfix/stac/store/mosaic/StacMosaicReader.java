@@ -1,10 +1,15 @@
 package com.joshfix.stac.store.mosaic;
 
+import com.joshfix.geotools.geotiff.CogFormat;
+import com.joshfix.geotools.geotiff.CogReader;
 import com.joshfix.stac.store.KeyNames;
 import com.joshfix.stac.store.LayerParameters;
 import com.joshfix.stac.store.utility.*;
 import com.joshfix.stac.store.vector.factory.StacDataStoreFactorySpi;
 import com.joshfix.stac.store.vector.factory.StacMosaicVectorDataStoreFactorySpi;
+import it.geosolutions.imageioimpl.plugins.tiff.stream.CachingHttpCogImageInputStream;
+import it.geosolutions.imageioimpl.plugins.tiff.stream.CachingHttpCogImageInputStreamSpi;
+import it.geosolutions.imageioimpl.plugins.tiff.stream.HttpCogImageInputStreamSpi;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -241,8 +246,11 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
         props.put(Utils.Prop.PATH_TYPE, PathType.URL);
         props.put(Utils.Prop.TYPENAME, configProps.getTypename());
         props.put(Utils.Prop.LOCATION_ATTRIBUTE, configProps.getLocationAttribute());
-        props.put(Utils.Prop.SUGGESTED_IS_SPI, UrlStringImageInputStreamSpi.class.getCanonicalName());
+
+        //props.put(Utils.Prop.SUGGESTED_IS_SPI, UrlStringImageInputStreamSpi.class.getCanonicalName());
+        props.put(Utils.Prop.SUGGESTED_IS_SPI, CachingHttpCogImageInputStreamSpi.class.getCanonicalName());
         props.put(Utils.Prop.SUGGESTED_SPI, MosaicConfigurationProperties.SUGGESTED_SPI);
+
         props.put(Utils.Prop.CACHING, false);
         props.put(Utils.Prop.CHECK_AUXILIARY_METADATA, false);
         props.put(StacDataStoreFactorySpi.SERVICE_URL.getName(), getSource().toString());
@@ -252,9 +260,12 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
             case "image/jp2":
                 props.put(Utils.Prop.SUGGESTED_FORMAT, JP2KFormat.class.getCanonicalName());
                 break;
+            case "image/tiff":
             case "image/vnd.stac.geotiff":
             case "image/x.geotiff":
-                props.put(Utils.Prop.SUGGESTED_FORMAT, UrlStringGeoTiffFormat.class.getCanonicalName());
+                //props.put(Utils.Prop.SUGGESTED_FORMAT, UrlStringGeoTiffFormat.class.getCanonicalName());
+                props.put(Utils.Prop.SUGGESTED_FORMAT, CogFormat.class.getCanonicalName());
+                //props.put(Utils.Prop.SUGGESTED_FORMAT, HttpCogI)
         }
 
         GranuleCatalog catalog = new GTDataStoreGranuleCatalog(
@@ -329,7 +340,8 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
                 case "image/geo+tiff":
                 case "image/geotiff":
                 case "image/tiff":
-                    return new GeoTiffReader(assetDescriptor.getUrl());
+                    //return new GeoTiffReader(assetDescriptor.getUrl());
+                    return new CogReader(assetDescriptor.getUrl());
             }
 
         } catch (Exception e) {
