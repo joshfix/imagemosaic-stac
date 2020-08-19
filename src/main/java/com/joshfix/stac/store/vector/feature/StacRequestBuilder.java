@@ -79,15 +79,15 @@ public class StacRequestBuilder {
         String stacQuery = request.getQuery();
 
         String storeStacFilter = layerParameters.getStoreStacFilter();
-        if (storeStacFilter != null && !storeStacFilter.isBlank()) {
-            stacQuery = (stacQuery == null || stacQuery.isBlank())
+        if (storeStacFilter != null && !storeStacFilter.isEmpty()) {
+            stacQuery = (stacQuery == null || stacQuery.isEmpty())
                     ? storeStacFilter
                     : storeStacFilter + " AND " + stacQuery;
         }
 
         String layerStacFilter = layerParameters.getLayerStacFilter();
-        if (layerStacFilter != null && !layerStacFilter.isBlank()) {
-            stacQuery = (stacQuery == null || stacQuery.isBlank())
+        if (layerStacFilter != null && !layerStacFilter.isEmpty()) {
+            stacQuery = (stacQuery == null || stacQuery.isEmpty())
                     ? layerStacFilter
                     : layerStacFilter + " AND " + stacQuery;
         }
@@ -132,10 +132,10 @@ public class StacRequestBuilder {
             }
         }
 
-        if (cqlFilter.getQuery() != null && !cqlFilter.getQuery().isBlank()) {
+        if (cqlFilter.getQuery() != null && !cqlFilter.getQuery().isEmpty()) {
             request.setQuery(cqlFilter.getQuery());
         }
-        if (cqlFilter.getIds() != null && !cqlFilter.getIds().isBlank()) {
+        if (cqlFilter.getIds() != null && !cqlFilter.getIds().isEmpty()) {
             request.setIds(cqlFilter.getIds().split(","));
         }
     }

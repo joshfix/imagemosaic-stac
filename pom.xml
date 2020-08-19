@@ -9,11 +9,11 @@
     <version>0.1.2</version>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <gt.version>21.1</gt.version>
-        <geoserver.version>2.15.1</geoserver.version>
-        <okhttp.version>4.1.0</okhttp.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <gt.version>23.2</gt.version>
+        <geoserver.version>2.17.2</geoserver.version>
+        <okhttp.version>4.8.1</okhttp.version>
     </properties>
 
     <dependencies>
@@ -58,6 +58,7 @@
             <version>${gt.version}</version>
         </dependency>
 
+        <!-- https://github.com/joshfix/cog-image-reader -->
         <dependency>
             <groupId>com.joshfix</groupId>
             <artifactId>cog-image-reader</artifactId>
@@ -121,32 +122,23 @@
     </build>
     <repositories>
         <repository>
-            <id>boundless</id>
-            <name>Boundless Maven Repository</name>
-            <url>https://repo.boundlessgeo.com/main</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>osgeo-release</id>
+            <name>Osgeo Release Maven Repository</name>
+            <url>https://repo.osgeo.org/repository/release/</url>
         </repository>
         <repository>
-            <id>boundless-release</id>
-            <name>Boundless Maven Repository</name>
-            <url>https://repo.boundlessgeo.com/release/</url>
+            <id>osgeo-snapshot</id>
+            <name>Osgeo Snapshot Maven Repository</name>
+            <url>https://repo.osgeo.org/repository/snapshot/</url>
         </repository>
         <repository>
-            <id>boundless-snapshot</id>
-            <name>Boundless Maven Repository</name>
-            <url>https://repo.boundlessgeo.com/snapshot/</url>
-        </repository>
-        <repository>
-            <id>boundless_ext</id>
-            <name>Boundless Maven Repository</name>
-            <url>https://repo.boundlessgeo.com/ext-release-local/</url>
+            <id>central</id>
+            <name>Central Maven Repository</name>
+            <url>https://repo1.maven.org/maven2</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-
         <repository>
             <id>geosolutions</id>
             <name>geosolutions repository</name>

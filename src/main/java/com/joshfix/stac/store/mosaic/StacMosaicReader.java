@@ -116,7 +116,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
 
         // use the provided default item id or a random item, given the store's stac filter and item type to extract
         // the imagery resolution and CRS.  note this implies all imagery of the given type has the same resolution.
-        GridCoverage2DReader sampleReader = (sampleItemId != null && !sampleItemId.isBlank()) ?
+        GridCoverage2DReader sampleReader = (sampleItemId != null && !sampleItemId.isEmpty()) ?
                 getGridCoverageReader(sampleItemId) :
                 getGridCoverageReader(getRandomItem());
 
@@ -263,6 +263,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
             case "image/tiff":
             case "image/vnd.stac.geotiff":
             case "image/x.geotiff":
+            case "image/tiff; application=geotiff; profile=cloud-optimized":
                 //props.put(Utils.Prop.SUGGESTED_FORMAT, UrlStringGeoTiffFormat.class.getCanonicalName());
                 props.put(Utils.Prop.SUGGESTED_FORMAT, CogFormat.class.getCanonicalName());
                 //props.put(Utils.Prop.SUGGESTED_FORMAT, HttpCogI)
@@ -340,6 +341,7 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
                 case "image/geo+tiff":
                 case "image/geotiff":
                 case "image/tiff":
+                case "image/tiff; application=geotiff; profile=cloud-optimized":
                     //return new GeoTiffReader(assetDescriptor.getUrl());
                     return new CogReader(assetDescriptor.getUrl());
             }
@@ -381,13 +383,13 @@ public class StacMosaicReader extends AbstractGridCoverage2DReader {
 
         SearchRequest searchRequest = new SearchRequest();
 
-        if (null != collection && !collection.isBlank()) {
+        if (null != collection && !collection.isEmpty()) {
             searchRequest.setCollections(new String[]{collection});
         }
 
         String stacQuery = null;
-        if (storeStacFilter != null && !storeStacFilter.isBlank()) {
-            stacQuery = (stacQuery == null || stacQuery.isBlank())
+        if (storeStacFilter != null && !storeStacFilter.isEmpty()) {
+            stacQuery = (stacQuery == null || stacQuery.isEmpty())
                     ? storeStacFilter
                     : storeStacFilter + " AND " + stacQuery;
         }

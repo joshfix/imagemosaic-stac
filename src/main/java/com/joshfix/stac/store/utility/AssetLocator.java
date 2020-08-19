@@ -53,7 +53,8 @@ public class AssetLocator {
 
     public static AssetDescriptor describeAsset(Map asset) {
         String type = asset.get("type").toString().toLowerCase();
-        if (type.equals("image/vnd.stac.geotiff") ||
+        if (type.equals("image/tiff; application=geotiff; profile=cloud-optimized") ||
+                type.equals("image/vnd.stac.geotiff") ||
                 type.equals("image/x.geotiff") ||
                 type.equals("image/geo+tiff") ||
                 type.equals("image/geotiff") ||

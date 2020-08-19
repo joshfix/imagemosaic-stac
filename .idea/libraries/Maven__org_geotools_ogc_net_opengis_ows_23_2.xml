@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.geotools.ogc:net.opengis.ows:23.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/geotools/ogc/net.opengis.ows/23.2/net.opengis.ows-23.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/geotools/ogc/net.opengis.ows/23.2/net.opengis.ows-23.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/geotools/ogc/net.opengis.ows/23.2/net.opengis.ows-23.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

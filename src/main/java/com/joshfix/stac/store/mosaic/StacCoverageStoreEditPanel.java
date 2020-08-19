@@ -77,8 +77,10 @@ public class StacCoverageStoreEditPanel extends StoreEditPanel {
             });
         } else {
             // TODO remove
-            model.setUrl("https://stac.boundlessgeo.io/stac/search");
+            model.setUrl("https://stac.boundlessgeo.io/search");
             model.setCollection("landsat-8-l1");
+            model.setStoreStacFilter("");
+            model.setAssetId("B2");
         }
 
         TextParamPanel<String> urlPanel = new TextParamPanel<>(
