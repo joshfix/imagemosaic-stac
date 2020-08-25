@@ -1,7 +1,7 @@
 package com.joshfix.stac.store.vector.feature;
 
 import com.joshfix.stac.store.LayerParameters;
-import com.joshfix.stac.store.mosaic.MosaicConfigurationProperties;
+import com.joshfix.stac.store.mosaic.StacMosaicReader;
 import com.joshfix.stac.store.utility.AssetLocator;
 import lombok.extern.slf4j.Slf4j;
 import org.geotools.data.FeatureReader;
@@ -120,7 +120,7 @@ public class StacFeatureIterator implements SimpleFeatureIterator, FeatureReader
             typeBuilder.add("geometry", Polygon.class);
             typeBuilder.setDefaultGeometry("geometry");
         }
-        typeBuilder.add(MosaicConfigurationProperties.DEFAULT_LOCATION_ATTRIBUTE_VALUE, String.class);
+        typeBuilder.add(StacMosaicReader.LOCATION_ATTRIBUTE, String.class);
         typeBuilder.add("crs", String.class);
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(typeBuilder.buildFeatureType());
 
@@ -179,7 +179,7 @@ public class StacFeatureIterator implements SimpleFeatureIterator, FeatureReader
         }
 
         featureBuilder.set(
-                MosaicConfigurationProperties.DEFAULT_LOCATION_ATTRIBUTE_VALUE,
+                StacMosaicReader.LOCATION_ATTRIBUTE,
                 AssetLocator.getAssetImageUrl(item, layerParameters.getAssetId()));
         return featureBuilder.buildFeature((String) item.get("id"));
     }

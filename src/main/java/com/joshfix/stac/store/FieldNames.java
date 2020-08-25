@@ -21,4 +21,14 @@ public interface FieldNames {
     String SAMPLE_ITEM_ID = "STAC sample item ID";
     String URL = "STAC URL";
 
+    String VECTOR_STORE = "STAC Vector Store";
+    String UNIQUE_BY = "Unique by";
+    String SCORE_BY = "Score by";
+    String ITEM_TYPE = "Item type";
+    String HIGHEST_SCORE_WINS = "Highest score values win";
+    String MIN_X = "Min X";
+    String MIN_Y = "Min Y";
+    String MAX_X = "Max X";
+    String MAX_Y= "Max Y";
+
 }

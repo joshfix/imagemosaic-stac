@@ -1,6 +1,7 @@
 package com.joshfix.stac.store.vector.feature;
 
 import com.joshfix.stac.store.LayerParameters;
+import com.joshfix.stac.store.mosaic.StacMosaicReader;
 import com.joshfix.stac.store.utility.*;
 import com.joshfix.stac.store.vector.store.StacDataStore;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +25,6 @@ import java.awt.RenderingHints.Key;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.joshfix.stac.store.mosaic.MosaicConfigurationProperties.DEFAULT_TYPENAME_VALUE;
 
 /**
  * @author joshfix
@@ -56,7 +55,7 @@ public abstract class StacFeatureSource implements SimpleFeatureSource {
         store = stacDataStore;
         this.client = client;
         this.layerParameters = layerParameters;
-        this.name = new NameImpl(name.getNamespaceURI(), DEFAULT_TYPENAME_VALUE);
+        this.name = new NameImpl(name.getNamespaceURI(), StacMosaicReader.TYPENAME);
     }
 
     @Override

@@ -10,8 +10,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Data
 @Slf4j
-public class MosaicConfigurationProperties {
-
+public class MosaicConfigurationPropertiesx {
+/*
     private String crs;
     private String typename;
     private String locationAttribute;
@@ -36,5 +36,5 @@ public class MosaicConfigurationProperties {
         locationAttribute = PropertyResolver.getPropertyValue(LOCATION_ATTRIBUTE_VAR, DEFAULT_LOCATION_ATTRIBUTE_VALUE);
         typename = PropertyResolver.getPropertyValue(TYPENAME_VAR, DEFAULT_TYPENAME_VALUE);
     }
-
+*/
 }

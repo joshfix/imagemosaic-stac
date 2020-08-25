@@ -62,7 +62,8 @@ public class StacMosaicFormat extends AbstractGridFormat {
                         INPUT_TRANSPARENT_COLOR,
                         SUGGESTED_TILE_SIZE,
                         PARAM_FILTER,
-                        AOI_FILTER
+                        AOI_FILTER,
+                        BANDS
                 }));
     }
 

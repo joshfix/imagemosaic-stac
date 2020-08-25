@@ -127,7 +127,7 @@ public class StacCoverageStoreEditPanel extends StoreEditPanel {
     @Data
     public static class StacModel implements Serializable {
         private CoverageStoreInfoImpl coverageStoreInfo;
-        private String url = "http://imagery-stacwoba-stage.granduke.net/items";
+        private String url = "https://stac.boundlessgeo.io/search";
         private String collection;
         private String sampleItemId;
         private String storeStacFilter = DEFAULT_STAC_FILTER;
