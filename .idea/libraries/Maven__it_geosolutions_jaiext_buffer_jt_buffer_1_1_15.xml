@@ -3,9 +3,6 @@
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/it/geosolutions/jaiext/buffer/jt-buffer/1.1.15/jt-buffer-1.1.15.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/it/geosolutions/jaiext/buffer/jt-buffer/1.1.15/jt-buffer-1.1.15-javadoc.jar!/" />
-    </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/it/geosolutions/jaiext/buffer/jt-buffer/1.1.15/jt-buffer-1.1.15-sources.jar!/" />
     </SOURCES>

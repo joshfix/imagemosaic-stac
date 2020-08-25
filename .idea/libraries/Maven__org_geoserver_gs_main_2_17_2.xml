@@ -3,9 +3,6 @@
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/geoserver/gs-main/2.17.2/gs-main-2.17.2.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/geoserver/gs-main/2.17.2/gs-main-2.17.2-javadoc.jar!/" />
-    </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/org/geoserver/gs-main/2.17.2/gs-main-2.17.2-sources.jar!/" />
     </SOURCES>

@@ -3,9 +3,6 @@
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3-javadoc.jar!/" />
-    </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3-sources.jar!/" />
     </SOURCES>

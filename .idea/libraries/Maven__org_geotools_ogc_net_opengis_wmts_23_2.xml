@@ -3,9 +3,6 @@
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/geotools/ogc/net.opengis.wmts/23.2/net.opengis.wmts-23.2.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/geotools/ogc/net.opengis.wmts/23.2/net.opengis.wmts-23.2-javadoc.jar!/" />
-    </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/org/geotools/ogc/net.opengis.wmts/23.2/net.opengis.wmts-23.2-sources.jar!/" />
     </SOURCES>

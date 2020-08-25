@@ -3,9 +3,6 @@
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/net/sf/json-lib/json-lib/2.4.2-geoserver/json-lib-2.4.2-geoserver.jar!/" />
     </CLASSES>
-    <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/net/sf/json-lib/json-lib/2.4.2-geoserver/json-lib-2.4.2-geoserver-javadoc.jar!/" />
-    </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/net/sf/json-lib/json-lib/2.4.2-geoserver/json-lib-2.4.2-geoserver-sources.jar!/" />
     </SOURCES>
