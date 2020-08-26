@@ -1,4 +1,4 @@
-# STAC Plugin for GeoTools/GeoServer
+# STAC ImageMosaic Store for GeoTools/GeoServer
 
 ## About
 
