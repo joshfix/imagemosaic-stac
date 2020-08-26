@@ -1,4 +1,4 @@
-# STAC ImageMosaic Store for GeoTools/GeoServer
+# STAC Image Mosaic Store for GeoTools/GeoServer
 
 ## About
 
